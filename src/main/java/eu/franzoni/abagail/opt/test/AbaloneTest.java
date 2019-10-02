@@ -109,7 +109,7 @@ public class AbaloneTest {
         double[][][] attributes = new double[4177][][];
 
         try {
-            BufferedReader br = new BufferedReader(new FileReader(new File("src/opt/test/abalone.txt")));
+            BufferedReader br = new BufferedReader(new FileReader(AbaloneTest.class.getResource("abalone.txt").getFile()));
 
             for(int i = 0; i < attributes.length; i++) {
                 Scanner scan = new Scanner(br.readLine());

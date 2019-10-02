@@ -1,8 +1,11 @@
 package eu.franzoni.abagail.opt.example;
 
+import eu.franzoni.abagail.util.linalg.DenseVector;
 import eu.franzoni.abagail.util.linalg.Vector;
 import eu.franzoni.abagail.opt.EvaluationFunction;
 import eu.franzoni.abagail.shared.Instance;
+
+import java.util.Arrays;
 
 /**
  * A four peaks evaluation function
@@ -43,6 +46,14 @@ public class FourPeaksEvaluationFunction implements EvaluationFunction {
             r = data.size();
         }
         return Math.max(tail, head) + r;
+    }
+
+    // don't know how it works with odd lengths. We don't care.
+    public double findTheoreticalMaximum(final int dataSize) {
+        final double[] myData = new double[dataSize];
+        Arrays.fill(myData, 0.0);
+        Arrays.fill(myData, 0, this.t+1, 1.0);
+        return this.value(new Instance(new DenseVector(myData)));
     }
     
     

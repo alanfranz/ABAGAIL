@@ -53,6 +53,10 @@ public class ConvergenceTrainer implements Trainer {
         this(trainer, THRESHOLD, MAX_ITERATIONS);
     }
 
+    public ConvergenceTrainer(Trainer trainer, int maxIterations) {
+        this(trainer, THRESHOLD, maxIterations);
+    }
+
     /**
      * @see Trainer#train()
      */
