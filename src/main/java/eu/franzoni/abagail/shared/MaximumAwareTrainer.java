@@ -11,7 +11,8 @@ public class MaximumAwareTrainer implements Trainer {
      */
     private final OptimizationAlgorithm optimizationAlgorithm;
     private final EvaluationFunction ef;
-    private Instance actualMaximum;
+    private Instance latestEvaluationResult;
+    private Integer iterationCountAtLatestEvaluation;
 
     /**
      * The number of iterations to train
@@ -37,18 +38,22 @@ public class MaximumAwareTrainer implements Trainer {
             sum += optimizationAlgorithm.train();
             final Instance currentValue = optimizationAlgorithm.getOptimal();
             final double evaluated = ef.value(currentValue);
+            this.latestEvaluationResult = currentValue;
             if (Math.abs(evaluated - maximumExpectedValue) < EPSILON) {
-                this.actualMaximum = currentValue;
                 System.out.println("Early bailout: " + ef.value(currentValue));
+                iterationCountAtLatestEvaluation = i+1;
                 return sum / (i+1);
             };
         }
+        iterationCountAtLatestEvaluation = maxIterations;
         return sum / maxIterations;
     }
 
-    public Instance getActualMaximum() {
-        return actualMaximum;
+    public Instance getLatestEvaluationResult() {
+        return latestEvaluationResult;
     }
 
-
+    public Integer getIterationCountAtLatestEvaluation() {
+        return iterationCountAtLatestEvaluation;
+    }
 }

@@ -21,14 +21,9 @@ public interface Writer {
      * 
      * @throws IOException
      */
-    public void close() throws IOException;
+    public void close();
     
-    /**
-     * Open a writer for writing.
-     * 
-     * @throws IOException
-     */
-    public void open() throws IOException;
+
     
     /**
      * Write a datapoint to a record.
@@ -36,12 +31,12 @@ public interface Writer {
      * @param str
      * @throws IOException
      */
-    public void write(String str) throws IOException;
+    public void write(String str);
     
     /**
      * Advance to the next record.
      * 
      * @throws IOException
      */
-    public void nextRecord() throws IOException;
+    public void nextRecord();
 }
