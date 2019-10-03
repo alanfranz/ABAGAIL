@@ -65,8 +65,9 @@ public class FourPeaksTest {
                     final int T = N / divisor;
                     System.out.println("Array size: " + N + " T: " + T);
                     MyRandom.initialize(seed);
-                    fourPeaks(N, T);
-                    sixPeaks(N, T);
+                    //fourPeaks(N, T);
+                    //sixPeaks(N, T);
+                    doThings(N, T);
                     System.out.println("--------------");
                 }
             }
@@ -113,6 +114,47 @@ public class FourPeaksTest {
         fit = new FixedIterationTrainer(mimic, 2000);
         final double mimicError = fit.train();
         System.out.println("MIMIC: " + ef.value(mimic.getOptimal()));
+    }
+
+    private static void doThings(int N, int T) {
+        int[] ranges = new int[N];
+        Arrays.fill(ranges, 2);
+        FourPeaksEvaluationFunction ef = new FourPeaksEvaluationFunction(T);
+        Distribution odd = new DiscreteUniformDistribution(ranges);
+        NeighborFunction nf = new DiscreteChangeOneNeighbor(ranges);
+
+        MaximumAwareTrainer fit;
+        // RANDOM HILL CLIMBING
+//        HillClimbingProblem hcp = new GenericHillClimbingProblem(ef, odd, nf);
+//        RandomizedHillClimbing rhc = new RandomizedHillClimbing(hcp);
+//        fit = new FixedIterationTrainer(rhc, 2000);
+//        final double rhcError = fit.train();
+//        Instance optimal = rhc.getOptimal();
+        System.out.println("Four Peaks Theoretical Maximum: " + ef.findTheoreticalMaximum(N));
+//        System.out.println("RHC: " + ef.value(optimal));
+
+        // SA
+//        SimulatedAnnealing sa = new SimulatedAnnealing(1E11, .95, hcp);
+//        fit = new FixedIterationTrainer(sa, 2000);
+//        final double saError = fit.train();
+//        System.out.println("SA: " + ef.value(sa.getOptimal()));
+
+        // GA
+//        CrossoverFunction cf = new SingleCrossOver();
+//        MutationFunction mf = new DiscreteChangeOneMutation(ranges);
+        Distribution df = new DiscreteDependencyTree(.1, ranges);
+//        GeneticAlgorithmProblem gap = new GenericGeneticAlgorithmProblem(ef, odd, mf, cf);
+//        StandardGeneticAlgorithm ga = new StandardGeneticAlgorithm(200, 100, 10, gap);
+//        fit = new FixedIterationTrainer(ga, 2000);
+//        final double gaError = fit.train();
+//        System.out.println("GA: " + ef.value(ga.getOptimal()));
+
+        // MIMIC
+        ProbabilisticOptimizationProblem pop = new GenericProbabilisticOptimizationProblem(ef, odd, df);
+        MIMIC mimic = new MIMIC(200, 20, pop);
+        fit = new MaximumAwareTrainer(mimic, ef, ef.findTheoreticalMaximum(N), 200000);
+        final double mimicError = fit.train();
+        System.out.println("MIMIC: " + ef.value(fit.getActualMaximum()));
     }
 
     private static void sixPeaks(int N, int T) {
