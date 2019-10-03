@@ -1,13 +1,14 @@
 package eu.franzoni.abagail.opt.example;
 
 import eu.franzoni.abagail.opt.EvaluationFunction;
+import eu.franzoni.abagail.opt.MaximizableEvaluationFunction;
 import eu.franzoni.abagail.shared.Instance;
 import eu.franzoni.abagail.util.linalg.DenseVector;
 import eu.franzoni.abagail.util.linalg.Vector;
 
 import java.util.Arrays;
 
-public class SixPeaksEvaluationFunction implements EvaluationFunction {
+public class SixPeaksEvaluationFunction implements MaximizableEvaluationFunction {
     private int t;
 
     public SixPeaksEvaluationFunction(int t) {

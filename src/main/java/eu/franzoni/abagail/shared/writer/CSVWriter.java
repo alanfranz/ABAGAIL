@@ -56,11 +56,26 @@ public class CSVWriter implements Writer {
 
     @Override
     public void write(String str) throws IOException {
+        if (str.contains(",")) {
+            throw new IllegalArgumentException("unsupported input comma");
+        }
         this.buffer.add(str);
+    }
+
+    public void writeMany(String... strings) throws IOException {
+        for (String str: strings) {
+            if (str.contains(",")) {
+                throw new IllegalArgumentException("unsupported input comma");
+            }
+            this.buffer.add(str);
+        }
     }
 
     @Override
     public void nextRecord() throws IOException {
+        if (buffer.size() != this.fields.size()) {
+            throw new IllegalStateException("incomplete record");
+        }
         writeRow(buffer);
         //clear the buffer for the next record
         buffer.clear();

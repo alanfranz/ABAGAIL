@@ -1,5 +1,6 @@
 package eu.franzoni.abagail.opt.example;
 
+import eu.franzoni.abagail.opt.MaximizableEvaluationFunction;
 import eu.franzoni.abagail.util.linalg.DenseVector;
 import eu.franzoni.abagail.util.linalg.Vector;
 import eu.franzoni.abagail.opt.EvaluationFunction;
@@ -12,7 +13,7 @@ import java.util.Arrays;
  * @author Andrew Guillory gtg008g@mail.gatech.edu
  * @version 1.0
  */
-public class FourPeaksEvaluationFunction implements EvaluationFunction {
+public class FourPeaksEvaluationFunction implements MaximizableEvaluationFunction {
     /**
      * The t value
      */

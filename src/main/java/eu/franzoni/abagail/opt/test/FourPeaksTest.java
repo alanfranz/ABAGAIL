@@ -45,8 +45,8 @@ public class FourPeaksTest {
      */
     //private static final int T = N / 10;
     public static void main(String[] args) {
-        final List<Integer> sizes = Arrays.asList(10, 40, 100);
-        final List<Integer> divisors = Arrays.asList(10, 20);
+        final List<Integer> sizes = Arrays.asList(50, 100);
+        final List<Double> divisors = Arrays.asList(0.1);
 
         final List<Long> seeds = Arrays.asList(13529634494442651L, 5656981922355810402L
                 , -6449267216724225329L, -4411830362201525141L, 5566798682235319198L, -8758420082094094714L, 3253005473232577707L, -5286286812144096374L, -4119452930045979494L, 5770958020097602318L, 683138933608733263L, 8209964896825328468L, 7031392117777361361L, -6121210489028553847L, -6469731346477625132L, -6665466218042342981L, -5961282655162978163L, 1696770048611725543L, 8029254822252000300L, -942868935122628217L, -2724805368243433498L, 6744958667841432491L, 8992788776112062706L, -267750365740541309L, -4609461931086629707L, -6346129594062662673L, 8303094097110875302L, 8534572557185839709L, -1513711453533974150L, -1988507183983714377L,
@@ -59,24 +59,23 @@ public class FourPeaksTest {
                 -9207226534984257761L, -7673201591837605072L, 865598175074152134L, -7256334452322277028L, -7475208512913142686L, -6924067848650035036L, -6415543556141845702L, -640014635566371395L,
                 -1981500378889374518L, -8219243506348948437L, 5146132043411957838L, 6242824757159542603L, -2527691444947296299L, -7829257710384305046L, -3979136175127034588L, -4114460505497727855L, 613711846571433146L);
 
-        for (Integer divisor : divisors) {
+        final int iterations = 100000;
+
+        for (double perc : divisors) {
             for (Integer N : sizes) {
                 for (Long seed : seeds) {
-                    final int T = N / divisor;
-                    System.out.println("Array size: " + N + " T: " + T);
+                    final int T = (int) Math.round(N * perc);
+                    System.out.println("Array size: " + N + " T%: " + perc);
                     MyRandom.initialize(seed);
-                    //fourPeaks(N, T);
-                    //sixPeaks(N, T);
-                    doThings(N, T);
+                    fourPeaks(N, T, iterations);
+                    sixPeaks(N, T, iterations);
                     System.out.println("--------------");
                 }
             }
         }
-
-
     }
 
-    private static void fourPeaks(int N, int T) {
+    private static void fourPeaks(int N, int T, int maximumIterations) {
         int[] ranges = new int[N];
         Arrays.fill(ranges, 2);
         FourPeaksEvaluationFunction ef = new FourPeaksEvaluationFunction(T);
@@ -86,17 +85,17 @@ public class FourPeaksTest {
         // RANDOM HILL CLIMBING
         HillClimbingProblem hcp = new GenericHillClimbingProblem(ef, odd, nf);
         RandomizedHillClimbing rhc = new RandomizedHillClimbing(hcp);
-        Trainer fit = new FixedIterationTrainer(rhc, 2000);
+        MaximumAwareTrainer fit = new MaximumAwareTrainer(rhc, ef, ef.findTheoreticalMaximum(N), maximumIterations);
         final double rhcError = fit.train();
         Instance optimal = rhc.getOptimal();
         System.out.println("Four Peaks Theoretical Maximum: " + ef.findTheoreticalMaximum(N));
-        System.out.println("RHC: " + ef.value(optimal));
+        System.out.println("RHC: " + fit.getActualMaximum());
 
         // SA
         SimulatedAnnealing sa = new SimulatedAnnealing(1E11, .95, hcp);
-        fit = new FixedIterationTrainer(sa, 2000);
+        fit = new MaximumAwareTrainer(sa, ef, ef.findTheoreticalMaximum(N), maximumIterations);
         final double saError = fit.train();
-        System.out.println("SA: " + ef.value(sa.getOptimal()));
+        System.out.println("SA: " + fit.getActualMaximum());
 
         // GA
         CrossoverFunction cf = new SingleCrossOver();
@@ -104,60 +103,20 @@ public class FourPeaksTest {
         Distribution df = new DiscreteDependencyTree(.1, ranges);
         GeneticAlgorithmProblem gap = new GenericGeneticAlgorithmProblem(ef, odd, mf, cf);
         StandardGeneticAlgorithm ga = new StandardGeneticAlgorithm(200, 100, 10, gap);
-        fit = new FixedIterationTrainer(ga, 2000);
+        fit = new MaximumAwareTrainer(ga, ef, ef.findTheoreticalMaximum(N), maximumIterations);
         final double gaError = fit.train();
         System.out.println("GA: " + ef.value(ga.getOptimal()));
 
         // MIMIC
         ProbabilisticOptimizationProblem pop = new GenericProbabilisticOptimizationProblem(ef, odd, df);
         MIMIC mimic = new MIMIC(200, 20, pop);
-        fit = new FixedIterationTrainer(mimic, 2000);
+        fit = new MaximumAwareTrainer(mimic, ef, ef.findTheoreticalMaximum(N), maximumIterations);
         final double mimicError = fit.train();
         System.out.println("MIMIC: " + ef.value(mimic.getOptimal()));
     }
 
-    private static void doThings(int N, int T) {
-        int[] ranges = new int[N];
-        Arrays.fill(ranges, 2);
-        FourPeaksEvaluationFunction ef = new FourPeaksEvaluationFunction(T);
-        Distribution odd = new DiscreteUniformDistribution(ranges);
-        NeighborFunction nf = new DiscreteChangeOneNeighbor(ranges);
 
-        MaximumAwareTrainer fit;
-        // RANDOM HILL CLIMBING
-//        HillClimbingProblem hcp = new GenericHillClimbingProblem(ef, odd, nf);
-//        RandomizedHillClimbing rhc = new RandomizedHillClimbing(hcp);
-//        fit = new FixedIterationTrainer(rhc, 2000);
-//        final double rhcError = fit.train();
-//        Instance optimal = rhc.getOptimal();
-        System.out.println("Four Peaks Theoretical Maximum: " + ef.findTheoreticalMaximum(N));
-//        System.out.println("RHC: " + ef.value(optimal));
-
-        // SA
-//        SimulatedAnnealing sa = new SimulatedAnnealing(1E11, .95, hcp);
-//        fit = new FixedIterationTrainer(sa, 2000);
-//        final double saError = fit.train();
-//        System.out.println("SA: " + ef.value(sa.getOptimal()));
-
-        // GA
-//        CrossoverFunction cf = new SingleCrossOver();
-//        MutationFunction mf = new DiscreteChangeOneMutation(ranges);
-        Distribution df = new DiscreteDependencyTree(.1, ranges);
-//        GeneticAlgorithmProblem gap = new GenericGeneticAlgorithmProblem(ef, odd, mf, cf);
-//        StandardGeneticAlgorithm ga = new StandardGeneticAlgorithm(200, 100, 10, gap);
-//        fit = new FixedIterationTrainer(ga, 2000);
-//        final double gaError = fit.train();
-//        System.out.println("GA: " + ef.value(ga.getOptimal()));
-
-        // MIMIC
-        ProbabilisticOptimizationProblem pop = new GenericProbabilisticOptimizationProblem(ef, odd, df);
-        MIMIC mimic = new MIMIC(200, 20, pop);
-        fit = new MaximumAwareTrainer(mimic, ef, ef.findTheoreticalMaximum(N), 200000);
-        final double mimicError = fit.train();
-        System.out.println("MIMIC: " + ef.value(fit.getActualMaximum()));
-    }
-
-    private static void sixPeaks(int N, int T) {
+    private static void sixPeaks(int N, int T, int maximumIterations) {
         int[] ranges = new int[N];
         Arrays.fill(ranges, 2);
         SixPeaksEvaluationFunction ef = new SixPeaksEvaluationFunction(T);
@@ -167,7 +126,7 @@ public class FourPeaksTest {
         // RANDOM HILL CLIMBING
         HillClimbingProblem hcp = new GenericHillClimbingProblem(ef, odd, nf);
         RandomizedHillClimbing rhc = new RandomizedHillClimbing(hcp);
-        Trainer fit = new FixedIterationTrainer(rhc, 200000);
+        Trainer fit = new FixedIterationTrainer(rhc, maximumIterations);
         final double rhcError = fit.train();
         Instance optimal = rhc.getOptimal();
         System.out.println("Six Peaks Theoretical Maximum: " + ef.findTheoreticalMaximum(N));
