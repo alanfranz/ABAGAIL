@@ -24,10 +24,8 @@ import eu.franzoni.abagail.opt.ga.StandardGeneticAlgorithm;
 import eu.franzoni.abagail.opt.prob.GenericProbabilisticOptimizationProblem;
 import eu.franzoni.abagail.opt.prob.MIMIC;
 import eu.franzoni.abagail.opt.prob.ProbabilisticOptimizationProblem;
-import eu.franzoni.abagail.shared.ConvergenceTrainer;
+import eu.franzoni.abagail.shared.*;
 import eu.franzoni.abagail.shared.FixedIterationTrainer;
-import eu.franzoni.abagail.shared.Instance;
-import eu.franzoni.abagail.shared.Trainer;
 
 /**
  * Copied from ContinuousPeaksTest
@@ -45,6 +43,12 @@ public class FourPeaksTest {
     private static final int T = N / 10;
 
     public static void main(String[] args) {
+        //fourPeaks();
+        sixPeaks();
+
+    }
+
+    private static void fourPeaks() {
         int[] ranges = new int[N];
         Arrays.fill(ranges, 2);
         FourPeaksEvaluationFunction ef = new FourPeaksEvaluationFunction(T);
@@ -54,7 +58,7 @@ public class FourPeaksTest {
         // RANDOM HILL CLIMBING
         HillClimbingProblem hcp = new GenericHillClimbingProblem(ef, odd, nf);
         RandomizedHillClimbing rhc = new RandomizedHillClimbing(hcp);
-        Trainer fit = new ConvergenceTrainer(rhc, 2000);
+        Trainer fit = new FixedIterationTrainer(rhc, 2000);
         final double rhcError = fit.train();
         Instance optimal = rhc.getOptimal();
         System.out.println("Four Peaks Theoretical Maximum: " + ef.findTheoreticalMaximum(N));
@@ -62,7 +66,7 @@ public class FourPeaksTest {
 
         // SA
         SimulatedAnnealing sa = new SimulatedAnnealing(1E11, .95, hcp);
-        fit = new ConvergenceTrainer(sa, 2000);
+        fit = new FixedIterationTrainer(sa, 2000);
         final double saError = fit.train();
         System.out.println("SA: " + ef.value(sa.getOptimal()) + " ERROR: " + saError);
 
@@ -72,14 +76,54 @@ public class FourPeaksTest {
         Distribution df = new DiscreteDependencyTree(.1, ranges);
         GeneticAlgorithmProblem gap = new GenericGeneticAlgorithmProblem(ef, odd, mf, cf);
         StandardGeneticAlgorithm ga = new StandardGeneticAlgorithm(200, 100, 10, gap);
-        fit = new ConvergenceTrainer(ga, 2000);
+        fit = new FixedIterationTrainer(ga, 2000);
         final double gaError = fit.train();
         System.out.println("GA: " + ef.value(ga.getOptimal()) + " ERROR: " + gaError);
 
         // MIMIC
         ProbabilisticOptimizationProblem pop = new GenericProbabilisticOptimizationProblem(ef, odd, df);
         MIMIC mimic = new MIMIC(200, 20, pop);
-        fit = new ConvergenceTrainer(mimic, 2000);
+        fit = new FixedIterationTrainer(mimic, 2000);
+        final double mimicError = fit.train();
+        System.out.println("MIMIC: " + ef.value(mimic.getOptimal()) + " ERROR: " + mimicError);
+    }
+
+    private static void sixPeaks() {
+        int[] ranges = new int[N];
+        Arrays.fill(ranges, 2);
+        SixPeaksEvaluationFunction ef = new SixPeaksEvaluationFunction(T);
+        Distribution odd = new DiscreteUniformDistribution(ranges);
+        NeighborFunction nf = new DiscreteChangeOneNeighbor(ranges);
+
+        // RANDOM HILL CLIMBING
+        HillClimbingProblem hcp = new GenericHillClimbingProblem(ef, odd, nf);
+        RandomizedHillClimbing rhc = new RandomizedHillClimbing(hcp);
+        Trainer fit = new FixedIterationTrainer(rhc, 200000);
+        final double rhcError = fit.train();
+        Instance optimal = rhc.getOptimal();
+        System.out.println("Six Peaks Theoretical Maximum: " + ef.findTheoreticalMaximum(N));
+        System.out.println("RHC: " + ef.value(optimal) + " ERROR: " + rhcError);
+
+        // SA
+        SimulatedAnnealing sa = new SimulatedAnnealing(1E11, .95, hcp);
+        fit = new FixedIterationTrainer(sa, 200000);
+        final double saError = fit.train();
+        System.out.println("SA: " + ef.value(sa.getOptimal()) + " ERROR: " + saError);
+
+        // GA
+        CrossoverFunction cf = new SingleCrossOver();
+        MutationFunction mf = new DiscreteChangeOneMutation(ranges);
+        Distribution df = new DiscreteDependencyTree(.1, ranges);
+        GeneticAlgorithmProblem gap = new GenericGeneticAlgorithmProblem(ef, odd, mf, cf);
+        StandardGeneticAlgorithm ga = new StandardGeneticAlgorithm(200, 100, 10, gap);
+        fit = new MaximumAwareTrainer(ga, ef, ef.findTheoreticalMaximum(N), 200000);
+        final double gaError = fit.train();
+        System.out.println("GA: " + ef.value(ga.getOptimal()) + " ERROR: " + gaError);
+
+        // MIMIC
+        ProbabilisticOptimizationProblem pop = new GenericProbabilisticOptimizationProblem(ef, odd, df);
+        MIMIC mimic = new MIMIC(200, 20, pop);
+        fit = new MaximumAwareTrainer(mimic, ef, ef.findTheoreticalMaximum(N), 200000);
         final double mimicError = fit.train();
         System.out.println("MIMIC: " + ef.value(mimic.getOptimal()) + " ERROR: " + mimicError);
     }
