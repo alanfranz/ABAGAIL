@@ -1,5 +1,6 @@
 package eu.franzoni.abagail.opt.ga;
 
+import eu.franzoni.abagail.shared.MyRandom;
 import eu.franzoni.abagail.dist.Distribution;
 
 import eu.franzoni.abagail.shared.Instance;
@@ -26,7 +27,7 @@ public class SingleCrossOver implements CrossoverFunction {
         double[] newData = new double[a.size()];
 
         // Randomly assign the dividing point
-        int point = Distribution.random.nextInt(newData.length + 1);
+        int point = MyRandom.provideRandom().nextInt(newData.length + 1);
 
         // Assign the bits for the mated solution
         for (int i = 0; i < newData.length; i++) {

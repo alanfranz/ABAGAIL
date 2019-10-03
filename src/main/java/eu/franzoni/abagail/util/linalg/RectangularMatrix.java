@@ -1,5 +1,6 @@
 package eu.franzoni.abagail.util.linalg;
 
+import eu.franzoni.abagail.shared.MyRandom;
 import eu.franzoni.abagail.dist.Distribution;
 
 /**
@@ -172,7 +173,7 @@ public class RectangularMatrix extends Matrix {
         double[][] data = new double[m][n];
         for (int i = 0; i < data.length; i++) {
             for (int j = 0; j < data[i].length; j++) {
-                data[i][j] = Distribution.random.nextDouble();                
+                data[i][j] = MyRandom.provideRandom().nextDouble();
             }
         }
         return new RectangularMatrix(data);

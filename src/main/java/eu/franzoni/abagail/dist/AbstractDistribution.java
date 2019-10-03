@@ -1,6 +1,9 @@
 package eu.franzoni.abagail.dist;
 
 import eu.franzoni.abagail.shared.Instance;
+import eu.franzoni.abagail.shared.MyRandom;
+
+import java.util.Random;
 
 /**
  * An abstract distribution
@@ -8,6 +11,7 @@ import eu.franzoni.abagail.shared.Instance;
  * @version 1.0
  */
 public abstract class AbstractDistribution implements Distribution {
+    protected final Random random = MyRandom.provideRandom();
     
     /**
      * @see dist.Distribution#logp(shared.Instance)

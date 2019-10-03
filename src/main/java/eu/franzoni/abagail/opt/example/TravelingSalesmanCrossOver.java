@@ -1,5 +1,6 @@
 package eu.franzoni.abagail.opt.example;
 
+import eu.franzoni.abagail.shared.MyRandom;
 import eu.franzoni.abagail.dist.Distribution;
 
 import eu.franzoni.abagail.opt.ga.CrossoverFunction;
@@ -40,7 +41,7 @@ public class TravelingSalesmanCrossOver implements CrossoverFunction {
         nextb[b.getDiscrete(b.size() - 1)] = b.getDiscrete(0);
         boolean[] visited = new boolean[a.size()];
         int[] child = new int[a.size()];
-        child[0] = Distribution.random.nextInt(a.size());
+        child[0] = MyRandom.provideRandom().nextInt(a.size());
         visited[child[0]] = true;
         for (int i = 0; i < child.length - 1; i++) {
             int cur = child[i];
@@ -59,7 +60,7 @@ public class TravelingSalesmanCrossOver implements CrossoverFunction {
                 }
             } else {
                 do {
-                    next = Distribution.random.nextInt(a.size());
+                    next = MyRandom.provideRandom().nextInt(a.size());
                 } while (visited[next]);
             }
             child[i+1] = next;

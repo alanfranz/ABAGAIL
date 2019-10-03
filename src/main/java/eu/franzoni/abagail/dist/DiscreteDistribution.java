@@ -2,11 +2,13 @@ package eu.franzoni.abagail.dist;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Random;
 
 import eu.franzoni.abagail.shared.Copyable;
 import eu.franzoni.abagail.shared.DataSet;
 import eu.franzoni.abagail.shared.Instance;
 
+import eu.franzoni.abagail.shared.MyRandom;
 import eu.franzoni.abagail.util.ABAGAILArrays;
 import eu.franzoni.abagail.util.linalg.Vector;
 
@@ -226,6 +228,7 @@ public class DiscreteDistribution extends AbstractDistribution implements Serial
      * @param range the upper range of the output
      */
     public static DiscreteDistribution random(int range) {
+        final Random random = MyRandom.provideRandom();
         double[] probabilities = new double[range];
         // random intial values
         double sum = 0;

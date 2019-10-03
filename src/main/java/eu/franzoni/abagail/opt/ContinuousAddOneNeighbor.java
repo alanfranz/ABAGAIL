@@ -1,5 +1,6 @@
 package eu.franzoni.abagail.opt;
 
+import eu.franzoni.abagail.shared.MyRandom;
 import eu.franzoni.abagail.dist.Distribution;
 
 import eu.franzoni.abagail.shared.Instance;
@@ -34,9 +35,9 @@ public class ContinuousAddOneNeighbor implements NeighborFunction {
      * @see opt.NeighborFunction#neighbor(opt.OptimizationData)
      */
     public Instance neighbor(Instance d) {
-        int i = Distribution.random.nextInt(d.size());
+        int i = MyRandom.provideRandom().nextInt(d.size());
         Instance cod = (Instance) d.copy();
-        cod.getData().set(i, cod.getContinuous(i)+ Distribution.random.nextDouble() * amount - amount / 2);
+        cod.getData().set(i, cod.getContinuous(i)+ MyRandom.provideRandom().nextDouble() * amount - amount / 2);
         return cod;
     }
 }

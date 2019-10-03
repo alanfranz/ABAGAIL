@@ -1,5 +1,6 @@
 package eu.franzoni.abagail.opt;
 
+import eu.franzoni.abagail.shared.MyRandom;
 import eu.franzoni.abagail.dist.Distribution;
 
 import eu.franzoni.abagail.shared.Instance;
@@ -16,8 +17,8 @@ public class SwapNeighbor implements NeighborFunction {
      */
     public Instance neighbor(Instance d) {
         Instance cod = (Instance) d.copy();
-        int i = Distribution.random.nextInt(cod.getData().size());
-        int j = Distribution.random.nextInt(cod.getData().size());
+        int i = MyRandom.provideRandom().nextInt(cod.getData().size());
+        int j = MyRandom.provideRandom().nextInt(cod.getData().size());
         double temp = cod.getContinuous(i);
         cod.getData().set(i, cod.getContinuous(j));
         cod.getData().set(j, temp);

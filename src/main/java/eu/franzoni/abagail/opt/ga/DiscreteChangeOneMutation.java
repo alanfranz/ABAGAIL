@@ -1,5 +1,6 @@
 package eu.franzoni.abagail.opt.ga;
 
+import eu.franzoni.abagail.shared.MyRandom;
 import eu.franzoni.abagail.dist.Distribution;
 
 import eu.franzoni.abagail.shared.Instance;
@@ -27,8 +28,8 @@ public class DiscreteChangeOneMutation implements MutationFunction {
      * @see opt.ga.MutationFunction#mutate(opt.OptimizationData)
      */
     public void mutate(Instance d) {
-        int i = Distribution.random.nextInt(d.size());
-        d.getData().set(i, Distribution.random.nextInt(ranges[i]));
+        int i = MyRandom.provideRandom().nextInt(d.size());
+        d.getData().set(i, MyRandom.provideRandom().nextInt(ranges[i]));
     }
 
 }

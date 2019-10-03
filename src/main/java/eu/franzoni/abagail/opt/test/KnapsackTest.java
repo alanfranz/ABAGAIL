@@ -5,6 +5,7 @@ import java.util.Random;
 
 import eu.franzoni.abagail.dist.DiscreteDependencyTree;
 import eu.franzoni.abagail.dist.DiscreteUniformDistribution;
+import eu.franzoni.abagail.shared.MyRandom;
 import eu.franzoni.abagail.dist.Distribution;
 
 import eu.franzoni.abagail.opt.DiscreteChangeOneNeighbor;

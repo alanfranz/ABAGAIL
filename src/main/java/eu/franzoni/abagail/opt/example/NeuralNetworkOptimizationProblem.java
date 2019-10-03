@@ -1,5 +1,6 @@
 package eu.franzoni.abagail.opt.example;
 
+import eu.franzoni.abagail.shared.MyRandom;
 import eu.franzoni.abagail.dist.Distribution;
 
 import eu.franzoni.abagail.opt.ContinuousAddOneNeighbor;

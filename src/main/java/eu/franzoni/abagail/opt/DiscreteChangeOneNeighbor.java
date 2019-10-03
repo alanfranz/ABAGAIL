@@ -1,5 +1,6 @@
 package eu.franzoni.abagail.opt;
 
+import eu.franzoni.abagail.shared.MyRandom;
 import eu.franzoni.abagail.dist.Distribution;
 
 import eu.franzoni.abagail.shared.Instance;
@@ -29,8 +30,8 @@ public class DiscreteChangeOneNeighbor implements NeighborFunction {
      */
     public Instance neighbor(Instance d) {
         Instance cod = (Instance) d.copy();
-        int i = Distribution.random.nextInt(ranges.length);
-        cod.getData().set(i, Distribution.random.nextInt(ranges[i]));
+        int i = MyRandom.provideRandom().nextInt(ranges.length);
+        cod.getData().set(i, MyRandom.provideRandom().nextInt(ranges[i]));
         return cod;
     }
 

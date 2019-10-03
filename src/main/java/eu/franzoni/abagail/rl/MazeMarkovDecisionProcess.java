@@ -3,6 +3,7 @@ package eu.franzoni.abagail.rl;
 import java.io.BufferedReader;
 import java.io.FileReader;
 
+import eu.franzoni.abagail.shared.MyRandom;
 import eu.franzoni.abagail.dist.Distribution;
 
 /**
@@ -204,7 +205,7 @@ public class MazeMarkovDecisionProcess implements MarkovDecisionProcess {
      * @see rl.MarkovDecisionProcess#sampleState(int, int)
      */
     public int sampleState(int i, int a) {
-        if (Distribution.random.nextDouble() < motionFailureProbability) {
+        if (MyRandom.provideRandom().nextDouble() < motionFailureProbability) {
         	return i;
         }
         int nextState = -1;

@@ -1,5 +1,6 @@
 package eu.franzoni.abagail.shared.filt;
 
+import eu.franzoni.abagail.shared.MyRandom;
 import eu.franzoni.abagail.dist.Distribution;
 
 import eu.franzoni.abagail.shared.DataSet;
@@ -17,7 +18,7 @@ public class RandomOrderFilter implements DataSetFilter {
      */
     public void filter(DataSet dataSet) {
         for (int i = dataSet.size()-1; i > 0; i--) {
-            int j = Distribution.random.nextInt(i + 1);
+            int j = MyRandom.provideRandom().nextInt(i + 1);
             Instance temp = dataSet.get(i);
             dataSet.set(i, dataSet.get(j));
             dataSet.set(j, temp);

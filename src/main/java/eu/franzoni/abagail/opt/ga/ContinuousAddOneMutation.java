@@ -1,5 +1,6 @@
 package eu.franzoni.abagail.opt.ga;
 
+import eu.franzoni.abagail.shared.MyRandom;
 import eu.franzoni.abagail.dist.Distribution;
 
 import eu.franzoni.abagail.shared.Instance;
@@ -34,7 +35,7 @@ public class ContinuousAddOneMutation implements MutationFunction {
      * @see opt.ga.MutationFunction
      */
     public void mutate(Instance cod) {
-        int i = Distribution.random.nextInt(cod.size());
-        cod.getData().set(i, cod.getContinuous(i)+ Distribution.random.nextDouble() * amount - amount / 2);
+        int i = MyRandom.provideRandom().nextInt(cod.size());
+        cod.getData().set(i, cod.getContinuous(i)+ MyRandom.provideRandom().nextDouble() * amount - amount / 2);
     }
 }

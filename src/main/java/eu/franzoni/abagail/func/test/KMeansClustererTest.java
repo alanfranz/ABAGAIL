@@ -1,5 +1,6 @@
 package eu.franzoni.abagail.func.test;
 
+import eu.franzoni.abagail.shared.MyRandom;
 import eu.franzoni.abagail.dist.Distribution;
 import eu.franzoni.abagail.dist.MultivariateGaussian;
 import eu.franzoni.abagail.func.KMeansClusterer;
@@ -23,7 +24,7 @@ public class KMeansClustererTest {
         MultivariateGaussian mga = new MultivariateGaussian(new DenseVector(new double[] {10, 20, 30}), RectangularMatrix.eye(3).times(.5)); 
         MultivariateGaussian mgb = new MultivariateGaussian(new DenseVector(new double[] {-2, -3, -1}), RectangularMatrix.eye(3).times(.4)); 
         for (int i = 0; i < instances.length; i++) {
-            if (Distribution.random.nextBoolean()) {
+            if (MyRandom.provideRandom().nextBoolean()) {
                 instances[i] = mga.sample(null);   
             } else {
                 instances[i] = mgb.sample(null);

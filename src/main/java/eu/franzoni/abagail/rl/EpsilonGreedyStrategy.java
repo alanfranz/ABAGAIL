@@ -1,5 +1,6 @@
 package eu.franzoni.abagail.rl;
 
+import eu.franzoni.abagail.shared.MyRandom;
 import eu.franzoni.abagail.dist.Distribution;
 
 /**
@@ -25,8 +26,8 @@ public class EpsilonGreedyStrategy implements ExplorationStrategy {
      * @see rl.ExplorationStrategy#action(double[])
      */
     public int action(double[] qvalues) {
-        if (Distribution.random.nextDouble() < epsilon) {
-            return Distribution.random.nextInt(qvalues.length);
+        if (MyRandom.provideRandom().nextDouble() < epsilon) {
+            return MyRandom.provideRandom().nextInt(qvalues.length);
         }
         int best = 0;
         for (int i = 1; i < qvalues.length; i++) {

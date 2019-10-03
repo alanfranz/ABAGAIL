@@ -2,6 +2,7 @@ package eu.franzoni.abagail.dist.test;
 
 import eu.franzoni.abagail.util.linalg.DenseVector;
 import eu.franzoni.abagail.util.linalg.RectangularMatrix;
+import eu.franzoni.abagail.shared.MyRandom;
 import eu.franzoni.abagail.dist.Distribution;
 import eu.franzoni.abagail.dist.MixtureDistribution;
 import eu.franzoni.abagail.dist.DiscreteDistribution;
@@ -25,7 +26,7 @@ public class MixtureDistributionTest {
         MultivariateGaussian mga = new MultivariateGaussian(new DenseVector(new double[] {100, 100, 100}), RectangularMatrix.eye(3).times(.01)); 
         MultivariateGaussian mgb = new MultivariateGaussian(new DenseVector(new double[] {-1, -1, -1}), RectangularMatrix.eye(3).times(10)); 
         for (int i = 0; i < instances.length; i++) {
-            if (Distribution.random.nextBoolean()) {
+            if (MyRandom.provideRandom().nextBoolean()) {
                 instances[i] = mga.sample();   
             } else {
                 instances[i] = mgb.sample();

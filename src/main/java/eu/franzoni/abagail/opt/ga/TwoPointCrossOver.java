@@ -1,5 +1,6 @@
 package eu.franzoni.abagail.opt.ga;
 
+import eu.franzoni.abagail.shared.MyRandom;
 import eu.franzoni.abagail.dist.Distribution;
 import eu.franzoni.abagail.shared.Instance;
 
@@ -27,10 +28,10 @@ public class TwoPointCrossOver implements CrossoverFunction {
         double[] newData = new double[a.size()];
 
         // Randomly assign the first point
-        int firstPoint = Distribution.random.nextInt(newData.length + 1);
+        int firstPoint = MyRandom.provideRandom().nextInt(newData.length + 1);
 
         // Make sure the second point comes after the first point
-        int secondPoint = Distribution.random.nextInt(newData.length + 1 - firstPoint) + firstPoint;
+        int secondPoint = MyRandom.provideRandom().nextInt(newData.length + 1 - firstPoint) + firstPoint;
 
         // Assign bits to the mated solution
         for (int i = 0; i < newData.length; i++) {

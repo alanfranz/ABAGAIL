@@ -2,6 +2,7 @@ package eu.franzoni.abagail.func;
 
 import eu.franzoni.abagail.dist.AbstractConditionalDistribution;
 import eu.franzoni.abagail.dist.DiscreteDistribution;
+import eu.franzoni.abagail.shared.MyRandom;
 import eu.franzoni.abagail.dist.Distribution;
 import eu.franzoni.abagail.func.dtree.BinaryDecisionTreeSplit;
 import eu.franzoni.abagail.func.dtree.DecisionTreeNode;

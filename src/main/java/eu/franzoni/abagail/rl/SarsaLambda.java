@@ -1,5 +1,6 @@
 package eu.franzoni.abagail.rl;
 
+import eu.franzoni.abagail.shared.MyRandom;
 import eu.franzoni.abagail.dist.Distribution;
 
 /**
@@ -85,7 +86,7 @@ public class SarsaLambda implements PolicyLearner {
         this.values = new double[process.getStateCount()][process.getActionCount()];
         this.eligibility = new double[process.getStateCount()][process.getActionCount()];
         this.state = process.sampleInitialState();
-        this.action = Distribution.random.nextInt(process.getActionCount());
+        this.action = MyRandom.provideRandom().nextInt(process.getActionCount());
     }
 
     /**

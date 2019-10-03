@@ -1,6 +1,7 @@
 package eu.franzoni.abagail.opt;
 
 import eu.franzoni.abagail.shared.Instance;
+import eu.franzoni.abagail.shared.MyRandom;
 import eu.franzoni.abagail.dist.Distribution;
 
 

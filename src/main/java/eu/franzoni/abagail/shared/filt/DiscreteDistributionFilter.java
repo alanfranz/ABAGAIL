@@ -1,6 +1,7 @@
 package eu.franzoni.abagail.shared.filt;
 
 import eu.franzoni.abagail.dist.ConditionalDistribution;
+import eu.franzoni.abagail.shared.MyRandom;
 import eu.franzoni.abagail.dist.Distribution;
 import eu.franzoni.abagail.dist.DiscreteDistribution;
 import eu.franzoni.abagail.shared.DataSet;
