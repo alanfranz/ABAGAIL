@@ -6,6 +6,7 @@ import eu.franzoni.abagail.shared.EuclideanDistance;
 import eu.franzoni.abagail.shared.Instance;
 import eu.franzoni.abagail.util.linalg.DenseVector;
 import eu.franzoni.abagail.dist.*;
+import eu.franzoni.abagail.shared.MyRandom;
 import eu.franzoni.abagail.dist.Distribution;
 import eu.franzoni.abagail.dist.DiscreteDistribution;
 
@@ -87,7 +88,7 @@ public class KMeansClusterer extends AbstractConditionalDistribution implements 
         for (int i = 0; i < clusterCenters.length; i++) {
             int pick;
             do {
-                pick = Distribution.random.nextInt(set.size());
+                pick = MyRandom.provideRandom().nextInt(set.size());
             } while (assignments[pick] != 0);
             assignments[pick] = 1;
             clusterCenters[i] = (Instance) set.get(pick).copy();

@@ -1,5 +1,6 @@
 package eu.franzoni.abagail.opt.example;
 
+import eu.franzoni.abagail.opt.MaximizableEvaluationFunction;
 import eu.franzoni.abagail.util.linalg.DenseVector;
 import eu.franzoni.abagail.util.linalg.Vector;
 import eu.franzoni.abagail.opt.EvaluationFunction;
@@ -12,7 +13,7 @@ import java.util.Arrays;
  * @author Andrew Guillory gtg008g@mail.gatech.edu
  * @version 1.0
  */
-public class FourPeaksEvaluationFunction implements EvaluationFunction {
+public class FourPeaksEvaluationFunction implements MaximizableEvaluationFunction {
     /**
      * The t value
      */
@@ -36,16 +37,26 @@ public class FourPeaksEvaluationFunction implements EvaluationFunction {
             i++;
         }
         int head = i;
+
         i = data.size() - 1;
         while (i >= 0 && data.get(i) == 0) {
             i--;
         }
         int tail = data.size() - 1 - i;
+
         int r = 0;
         if (head > t && tail > t) {
             r = data.size();
         }
         return Math.max(tail, head) + r;
+    }
+
+    public static int tail(Vector data) {
+        int i = data.size() - 1;
+        while (i >= 0 && data.get(i) == 0) {
+            i--;
+        }
+        return data.size() - 1 - i;
     }
 
     // don't know how it works with odd lengths. We don't care.
@@ -54,6 +65,10 @@ public class FourPeaksEvaluationFunction implements EvaluationFunction {
         Arrays.fill(myData, 0.0);
         Arrays.fill(myData, 0, this.t+1, 1.0);
         return this.value(new Instance(new DenseVector(myData)));
+    }
+
+    public static void main(String[] args) {
+        System.out.println(tail(new DenseVector(new double[]{0.0,0.0,0.0,0.0})));
     }
     
     

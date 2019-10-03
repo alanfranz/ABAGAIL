@@ -1,5 +1,6 @@
 package eu.franzoni.abagail.rl;
 
+import eu.franzoni.abagail.shared.MyRandom;
 import eu.franzoni.abagail.dist.Distribution;
 import eu.franzoni.abagail.util.ABAGAILArrays;
 
@@ -29,7 +30,7 @@ public class Policy {
     public Policy(int numStates, int numActions) {
         actions = new int[numStates];
         for (int i = 0; i < actions.length; i++) {
-            actions[i] = Distribution.random.nextInt(numActions);
+            actions[i] = MyRandom.provideRandom().nextInt(numActions);
         }
     }
 

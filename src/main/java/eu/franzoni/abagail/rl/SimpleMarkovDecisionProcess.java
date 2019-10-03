@@ -1,6 +1,7 @@
 package eu.franzoni.abagail.rl;
 
 import eu.franzoni.abagail.shared.Instance;
+import eu.franzoni.abagail.shared.MyRandom;
 import eu.franzoni.abagail.dist.Distribution;
 import eu.franzoni.abagail.dist.UnivariateGaussian;
 import eu.franzoni.abagail.dist.hmm.ModularHiddenMarkovModel;

@@ -25,16 +25,25 @@ public class CSVWriter implements Writer {
         this.fileName = fileName;
         this.fields   = Arrays.asList(fields);
         this.buffer   = new ArrayList<String>();
+        this.open();
+
     }
 
     @Override
-    public void close() throws IOException {
-        this.fileWriter.close();
+    public void close(){
+        try {
+            this.fileWriter.close();
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
-    @Override
-    public void open() throws IOException {
-        this.fileWriter = new FileWriter(fileName);
+    private void open()  {
+        try {
+            this.fileWriter = new FileWriter(fileName);
+        } catch (IOException e) {
+            throw new IllegalArgumentException(e);
+        }
         writeRow(this.fields);
     }
 
@@ -42,25 +51,46 @@ public class CSVWriter implements Writer {
      * @param toWrite
      * @throws IOException
      */
-    private void writeRow(List<String> toWrite) throws IOException {
-        boolean addComma = false;
-        for (String field : toWrite) {
-            if (addComma) {
-                this.fileWriter.append(",");
+    private void writeRow(List<String> toWrite) {
+        try {
+            boolean addComma = false;
+            for (String field : toWrite) {
+                if (addComma) {
+                    this.fileWriter.append(",");
+                }
+                this.fileWriter.append(field);
+                addComma = true;
             }
-            this.fileWriter.append(field);
-            addComma = true;
+            this.fileWriter.append('\n');
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
         }
-        this.fileWriter.append('\n');
     }
 
     @Override
-    public void write(String str) throws IOException {
+    public void write(String str)  {
+        if (str.contains(",")) {
+            throw new IllegalArgumentException("unsupported input comma");
+        }
         this.buffer.add(str);
     }
 
+    public void writeMany(String... strings) {
+        for (String str: strings) {
+            if (str.contains(",")) {
+                throw new IllegalArgumentException("unsupported input comma");
+            }
+            this.buffer.add(str);
+        }
+
+        this.nextRecord();
+    }
+
     @Override
-    public void nextRecord() throws IOException {
+    public void nextRecord() {
+        if (buffer.size() != this.fields.size()) {
+            throw new IllegalStateException("incomplete record");
+        }
         writeRow(buffer);
         //clear the buffer for the next record
         buffer.clear();

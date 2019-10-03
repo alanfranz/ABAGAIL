@@ -6,6 +6,7 @@ import eu.franzoni.abagail.dist.DiscreteDistribution;
 
 import eu.franzoni.abagail.opt.OptimizationAlgorithm;
 import eu.franzoni.abagail.shared.Instance;
+import eu.franzoni.abagail.shared.MyRandom;
 
 
 /**
@@ -19,7 +20,7 @@ public class StandardGeneticAlgorithm extends OptimizationAlgorithm {
     /**
      * The random number generator
      */
-    private static final Random random = new Random();
+    private final Random random = MyRandom.provideRandom();
     
     /**
      * The population size

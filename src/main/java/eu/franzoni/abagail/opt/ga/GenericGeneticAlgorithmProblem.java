@@ -1,5 +1,6 @@
 package eu.franzoni.abagail.opt.ga;
 
+import eu.franzoni.abagail.shared.MyRandom;
 import eu.franzoni.abagail.dist.Distribution;
 import eu.franzoni.abagail.opt.EvaluationFunction;
 import eu.franzoni.abagail.opt.GenericOptimizationProblem;

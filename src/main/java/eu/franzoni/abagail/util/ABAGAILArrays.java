@@ -1,5 +1,7 @@
 package eu.franzoni.abagail.util;
 
+import eu.franzoni.abagail.shared.MyRandom;
+
 import java.text.DecimalFormat;
 import java.util.Random;
 
@@ -10,7 +12,7 @@ import java.util.Random;
  */
 public class ABAGAILArrays {
     /** Random number generator */
-    public static final Random random = new Random();
+    public final Random random = MyRandom.provideRandom();
     
     /**
      * Print out an array
@@ -184,6 +186,7 @@ public class ABAGAILArrays {
      * @return
      */
     public static int randomPartition(double[] a, int s, int e) {
+        final Random random = MyRandom.provideRandom();
         int i = random.nextInt(e - s) + s;
         swap(a, i, e-1);
         return partition(a, s, e);
@@ -198,6 +201,7 @@ public class ABAGAILArrays {
      * @return
      */
     public static int randomPartition(double[] a, int[] indices, int s, int e) {
+        final Random random = MyRandom.provideRandom();
         int i = random.nextInt(e - s) + s;
         swap(a, i, e-1);
         swap(indices, i, e-1);
@@ -334,6 +338,7 @@ public class ABAGAILArrays {
      * @param a the array to permute
      */
     public static void permute(int[] a) {
+        final Random random = MyRandom.provideRandom();
         for (int i = a.length-1; i > 0; i--) {
             int j = random.nextInt(i + 1);
             swap(a, i, j);
@@ -345,6 +350,7 @@ public class ABAGAILArrays {
      * @param a the array to permute
      */
     public static void permute(double[] a) {
+        final Random random = MyRandom.provideRandom();
         for (int i = a.length-1; i > 0; i--) {
             int j = random.nextInt(i + 1);
             swap(a, i, j);

@@ -1,5 +1,6 @@
 package eu.franzoni.abagail.opt;
 
+import eu.franzoni.abagail.shared.MyRandom;
 import eu.franzoni.abagail.dist.Distribution;
 
 import eu.franzoni.abagail.shared.Instance;
@@ -52,7 +53,7 @@ public class SimulatedAnnealing extends OptimizationAlgorithm {
         HillClimbingProblem p = (HillClimbingProblem) getOptimizationProblem();
         Instance neigh = p.neighbor(cur);
         double neighVal = p.value(neigh);
-        if (neighVal > curVal || Distribution.random.nextDouble() < 
+        if (neighVal > curVal || MyRandom.provideRandom().nextDouble() <
                 Math.exp((neighVal - curVal) / t)) {
             curVal = neighVal;
             cur = neigh;

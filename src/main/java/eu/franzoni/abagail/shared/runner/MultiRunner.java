@@ -45,7 +45,6 @@ public class MultiRunner {
         if (this.outputFolder != null) {
             File outputFile = new File(this.outputFolder, String.format("%s.csv", runner.getName()));
             writer = new CSVWriter(outputFile.getAbsolutePath(), outputFields);
-            writer.open();
         }
         for (int iterations : iterArray) {
             for (int pctTrain : pctTrainArray) {

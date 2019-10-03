@@ -2,6 +2,7 @@ package eu.franzoni.abagail.opt.ga;
 
 import eu.franzoni.abagail.shared.Instance;
 
+import eu.franzoni.abagail.shared.MyRandom;
 import eu.franzoni.abagail.dist.Distribution;
 
 /**
@@ -27,7 +28,7 @@ public class UniformCrossOver implements CrossoverFunction {
         // Assign bits to the mated solution
         for (int i = 0; i < newData.length; i++) {
             // Randomly pick a boolean value to determine which parent to take the ith bit from
-            if (Distribution.random.nextBoolean()) {
+            if (MyRandom.provideRandom().nextBoolean()) {
                 newData[i] = a.getContinuous(i);
             } else {
                 newData[i] = b.getContinuous(i);

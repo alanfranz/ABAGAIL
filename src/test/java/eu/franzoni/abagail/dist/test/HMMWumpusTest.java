@@ -1,5 +1,6 @@
 package eu.franzoni.abagail.dist.test;
 
+import eu.franzoni.abagail.shared.MyRandom;
 import eu.franzoni.abagail.dist.Distribution;
 import eu.franzoni.abagail.dist.DiscreteDistributionTable;
 import eu.franzoni.abagail.shared.DataSet;

@@ -9,6 +9,7 @@ import eu.franzoni.abagail.opt.ga.Vertex;
 import eu.franzoni.abagail.dist.DiscreteDependencyTree;
 import eu.franzoni.abagail.dist.DiscretePermutationDistribution;
 import eu.franzoni.abagail.dist.DiscreteUniformDistribution;
+import eu.franzoni.abagail.shared.MyRandom;
 import eu.franzoni.abagail.dist.Distribution;
 import eu.franzoni.abagail.opt.DiscreteChangeOneNeighbor;
 import eu.franzoni.abagail.opt.EvaluationFunction;
