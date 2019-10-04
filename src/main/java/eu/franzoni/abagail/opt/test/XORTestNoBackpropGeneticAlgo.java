@@ -25,6 +25,7 @@ public class XORTestNoBackpropGeneticAlgo {
      * @param args ignored
      */
     public static void main(String[] args) {
+        MyRandom.initialize(12345);
         // 1) Construct data instances for training.  These will also be run
         //    through the network at the bottom to verify the output
         double[][][] data = {
