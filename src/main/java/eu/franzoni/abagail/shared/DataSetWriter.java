@@ -67,7 +67,7 @@ public class DataSetWriter {
 
     /**
      * Write the file out
-     * @throws IOException when something goes bad
+     * @throws IOException when trainFeedForwardWithOptimizationAlgorithm goes bad
      */
     public void write() throws IOException {
         PrintWriter pw = new PrintWriter(new FileWriter(filename, this.append));

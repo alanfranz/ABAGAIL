@@ -1,7 +1,6 @@
 package eu.franzoni.abagail.shared.tester;
 
 import eu.franzoni.abagail.shared.Instance;
-import eu.franzoni.abagail.util.linalg.Vector;
 
 /**
  * An generic utility for comparing values in Instance objects
@@ -9,13 +8,13 @@ import eu.franzoni.abagail.util.linalg.Vector;
  * @author Jesse Rosalia <https://github.com/theJenix>
  * @date 2013-03-05
  */
-public class Comparison {
+public class BooleanComparison {
 
     private Instance expected;
     private Instance actual;
     private double epsilon = 1e-6;
 
-    public Comparison(Instance expected, Instance actual) {
+    public BooleanComparison(Instance expected, Instance actual) {
         this.expected = expected;
         this.actual   = actual;
 
@@ -102,6 +101,11 @@ public class Comparison {
      * @return 0 if x is appriximately y; 1 if x > y; -1 if x < y. 
      */
     public int compare(double x, double y) {
+        if (y>0.5) {
+            y=1.0;
+        } else {
+            y=0.0;
+        }
         double difference = x - y;
         if (Math.abs(difference) < epsilon) {
             return 0;

@@ -7,6 +7,7 @@ import eu.franzoni.abagail.opt.RandomizedHillClimbing;
 import eu.franzoni.abagail.opt.SimulatedAnnealing;
 import eu.franzoni.abagail.opt.example.NeuralNetworkOptimizationProblem;
 import eu.franzoni.abagail.shared.*;
+import eu.franzoni.abagail.shared.tester.*;
 
 /**
  * Based on the XORTest test class, this class uses a standard FeedForwardNetwork
@@ -27,6 +28,7 @@ public class XORTestNoBackpropSimAnneal {
     public static void main(String[] args) {
         // 1) Construct data instances for training.  These will also be run
         //    through the network at the bottom to verify the output
+        MyRandom.initialize(1235);
         double[][][] data = {
                { { 1, 1, 1, 1 }, { 0 } },
                { { 1, 0, 1, 0 }, { 1 } },
@@ -74,6 +76,16 @@ public class XORTestNoBackpropSimAnneal {
         //    optimal weights found for this network.
         Instance opt = o.getOptimal();
         network.setWeights(opt.getData());
+
+        int[] labels = new int[]{1, 0};
+
+        TestMetric acc = new AccuracyTestMetric();
+        TestMetric cm  = new ConfusionMatrixTestMetric(labels);
+        Tester t = new NeuralNetworkTester(network, acc, cm);
+        t.test(patterns);
+
+        acc.printResults();
+        cm.printResults();
         
         //10) Run the training data through the network with the weights discovered through optimization, and
         //    print out the expected label and result of the classifier for each instance.

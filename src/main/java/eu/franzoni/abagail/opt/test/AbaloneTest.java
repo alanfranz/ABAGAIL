@@ -97,7 +97,8 @@ public class AbaloneTest {
                 network.setInputValues(instances[j].getData());
                 network.run();
 
-                Instance output = instances[j].getLabel(), example = new Instance(network.getOutputValues());
+                Instance output = instances[j].getLabel();
+                Instance example = new Instance(network.getOutputValues());
                 example.setLabel(new Instance(Double.parseDouble(network.getOutputValues().toString())));
                 error += measure.value(output, example);
             }

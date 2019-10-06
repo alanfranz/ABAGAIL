@@ -47,18 +47,16 @@ public class NeuralNetworkThings {
         final SumOfSquaresError sumOfSquaresError = new SumOfSquaresError();
 
         Instance[] instances = initializeTrainingInstances();
-        final Rectifier rectifier = new Rectifier();
+//        final Rectifier rectifier = new Rectifier();
         DataSet dataset = new DataSet(instances);
 
         BackPropagationNetwork classificationNetwork1 = factory.createClassificationNetwork(
-                new int[]{inputLayer, 100, outputLayer}
-        );
+                new int[]{inputLayer, 150, 100, 50, outputLayer}, new Rectifier());
 
         BatchBackPropagationTrainer batchBackPropagationTrainer = new BatchBackPropagationTrainer(dataset,
                 classificationNetwork1,
                 sumOfSquaresError,
-                new RPROPUpdateRule()
-
+                new RPROPUpdateRule(0.0001, 50, .000001)
         );
 
         FixedIterationTrainer fixedIterationTrainer = new FixedIterationTrainer(batchBackPropagationTrainer, 1000);
@@ -186,7 +184,6 @@ public class NeuralNetworkThings {
 
         for (int i = 0; i < instances.length; i++) {
             instances[i] = new Instance(attributes[i][0]);
-            // classifications range from 0 to 30; split into 0 - 14 and 15 - 30
             instances[i].setLabel(new Instance(attributes[i][1][0]));
         }
 

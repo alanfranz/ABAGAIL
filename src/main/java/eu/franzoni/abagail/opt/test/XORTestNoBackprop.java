@@ -3,11 +3,7 @@ package eu.franzoni.abagail.opt.test;
 import eu.franzoni.abagail.opt.OptimizationAlgorithm;
 import eu.franzoni.abagail.opt.RandomizedHillClimbing;
 import eu.franzoni.abagail.opt.example.NeuralNetworkOptimizationProblem;
-import eu.franzoni.abagail.shared.DataSet;
-import eu.franzoni.abagail.shared.ErrorMeasure;
-import eu.franzoni.abagail.shared.FixedIterationTrainer;
-import eu.franzoni.abagail.shared.Instance;
-import eu.franzoni.abagail.shared.SumOfSquaresError;
+import eu.franzoni.abagail.shared.*;
 import eu.franzoni.abagail.shared.tester.AccuracyTestMetric;
 import eu.franzoni.abagail.shared.tester.ConfusionMatrixTestMetric;
 import eu.franzoni.abagail.shared.tester.NeuralNetworkTester;
@@ -33,6 +29,7 @@ public class XORTestNoBackprop {
      * @param args ignored
      */
     public static void main(String[] args) {
+        MyRandom.initialize(12354);
         // 1) Construct data instances for training.  These will also be run
         //    through the network at the bottom to verify the output
         int[] labels = { 0, 1 };
@@ -93,5 +90,13 @@ public class XORTestNoBackprop {
         
         acc.printResults();
         cm.printResults();
+
+        for (int i = 0; i < patterns.length; i++) {
+            network.setInputValues(patterns[i].getData());
+            network.run();
+            System.out.println("~~");
+            System.out.println(patterns[i].getLabel());
+            System.out.println(network.getOutputValues());
+        }
     }
 }

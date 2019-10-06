@@ -7,6 +7,7 @@ import eu.franzoni.abagail.opt.RandomizedHillClimbing;
 import eu.franzoni.abagail.opt.example.NeuralNetworkOptimizationProblem;
 import eu.franzoni.abagail.opt.ga.StandardGeneticAlgorithm;
 import eu.franzoni.abagail.shared.*;
+import eu.franzoni.abagail.shared.tester.*;
 
 /**
  * Based on the XORTest test class, this class uses a standard FeedForwardNetwork
@@ -39,6 +40,7 @@ public class XORTestNoBackpropGeneticAlgo {
             patterns[i] = new Instance(data[i][0]);
             patterns[i].setLabel(new Instance(data[i][1]));
         }
+        int[] labels = { 0, 1 };
 
         // 2) Instantiate a network using the FeedForwardNeuralNetworkFactory.  This network
         //    will be our classifier.
@@ -75,6 +77,15 @@ public class XORTestNoBackpropGeneticAlgo {
         //    optimal weights found for this network.
         Instance opt = o.getOptimal();
         network.setWeights(opt.getData());
+
+        //    print out the expected label and result of the classifier for each instance.
+        TestMetric acc = new AccuracyTestMetric();
+        TestMetric cm  = new ConfusionMatrixTestMetric(labels);
+        Tester t = new NeuralNetworkTester(network, acc, cm);
+        t.test(patterns);
+
+        acc.printResults();
+        cm.printResults();
         
         //10) Run the training data through the network with the weights discovered through optimization, and
         //    print out the expected label and result of the classifier for each instance.
