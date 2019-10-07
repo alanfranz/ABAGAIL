@@ -57,7 +57,7 @@ public class NeuralWinesExperiments {
     private static DecimalFormat df = new DecimalFormat("0.000");
 
     public static void main(String[] args) {
-        final List<Integer> maxIterationOptions = Arrays.asList(2000, 5000, 10000);
+        final List<Integer> maxIterationOptions = Arrays.asList(1000, 5000, 10000);
         // TODO: kfold
 
         final List<Long> seeds = Arrays.asList(13529634494442651L, 5656981922355810402L
