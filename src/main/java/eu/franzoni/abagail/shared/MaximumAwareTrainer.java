@@ -48,7 +48,7 @@ public class MaximumAwareTrainer implements Trainer {
             if (Math.abs(evaluated - maximumExpectedValue) < EPSILON) {
                 System.out.println("Early bailout: " + ef.value(currentValue));
                 iterationCountAtLatestEvaluation = i+1;
-                Arrays.fill(learningCurve, i, maxIterations-1, evaluated);
+                Arrays.fill(learningCurve, i, maxIterations, evaluated);
                 return sum / (i+1);
             };
         }
