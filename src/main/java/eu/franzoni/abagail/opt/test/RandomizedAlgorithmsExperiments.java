@@ -28,7 +28,7 @@ import eu.franzoni.abagail.shared.writer.CSVWriter;
  *
  * @version 1.0
  */
-public class FourPeaksTest {
+public class RandomizedAlgorithmsExperiments {
     /**
      * The n value
      */
