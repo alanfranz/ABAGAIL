@@ -1,7 +1,6 @@
 package eu.franzoni.abagail.opt.test;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 
@@ -32,6 +31,7 @@ import eu.franzoni.abagail.shared.writer.CSVWriter;
  */
 public class RandomizedAlgorithmsExperiments {
     public static void main(String[] args) {
+
         final List<Integer> bitstringSizes = Arrays.asList(10, 30, 60, 100);
         final List<Integer> maxIterationOptions = Arrays.asList(1000, 10000, 50000);
 
@@ -46,8 +46,16 @@ public class RandomizedAlgorithmsExperiments {
                 -9207226534984257761L, -7673201591837605072L, 865598175074152134L, -7256334452322277028L, -7475208512913142686L, -6924067848650035036L, -6415543556141845702L, -640014635566371395L,
                 -1981500378889374518L, -8219243506348948437L, 5146132043411957838L, 6242824757159542603L, -2527691444947296299L, -7829257710384305046L, -3979136175127034588L, -4114460505497727855L, 613711846571433146L);
 
+        String filename;
+        if (args.length > 0) {
+            filename = "randomized_algorithms_experiment_" + args[0] + "_" + System.currentTimeMillis() + ".csv";
+        } else {
+            filename = "randomized_algorithms_experiment_" + "all_" + System.currentTimeMillis() + ".csv";
+        }
+
+
         try (
-                final CSVWriter csvWriter = new CSVWriter("randomized_algorithms_experiment_" + System.currentTimeMillis() + ".csv", new String[]{
+                final CSVWriter csvWriter = new CSVWriter(filename, new String[]{
                         "group",
                         "bitstringSize",
                         "algorithm",
@@ -61,7 +69,7 @@ public class RandomizedAlgorithmsExperiments {
                 })) {
             final double perc = 0.1;
 
-            int groupIndex = 0; // only seed changes within the same groupIndex
+            int groupIndex = new Random().nextInt(999999);
 
             for (Integer iterations : maxIterationOptions) {
                 for (Integer N : bitstringSizes) {
@@ -69,10 +77,22 @@ public class RandomizedAlgorithmsExperiments {
                         final int T = (int) Math.round(N * perc);
                         System.out.println("Array size: " + N + " T%: " + perc);
                         MyRandom.initialize(seed);
-                        doYourCalculations(N, groupIndex, iterations, new FourPeaksEvaluationFunction(T), csvWriter);
-                        doYourCalculations(N, groupIndex, iterations, new SixPeaksEvaluationFunction(T), csvWriter);
-                        doYourCalculations(N, groupIndex, iterations, new FlipFlopEvaluationFunction(), csvWriter);
-                        doYourCalculations(N, groupIndex, iterations, new CountOnesEvaluationFunction(), csvWriter);
+                        if (args.length>0 && !args[0].equals("4P")) {}
+                        else {
+                            doYourCalculations(N, groupIndex, iterations, new FourPeaksEvaluationFunction(T), csvWriter);
+                        }
+                        if (args.length>0 && !args[0].equals("6P")) {}
+                        else {
+                            doYourCalculations(N, groupIndex, iterations, new SixPeaksEvaluationFunction(T), csvWriter);
+                        }
+                        if (args.length>0 && !args[0].equals("FF")) {}
+                        else {
+                            doYourCalculations(N, groupIndex, iterations, new FlipFlopEvaluationFunction(), csvWriter);
+                        }
+                        if (args.length>0 && !args[0].equals("C1")) {}
+                        else {
+                            doYourCalculations(N, groupIndex, iterations, new CountOnesEvaluationFunction(), csvWriter);
+                        }
                         System.out.println("--------------");
                     }
                     groupIndex += 1;
