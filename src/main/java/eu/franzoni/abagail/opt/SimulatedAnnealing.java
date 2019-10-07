@@ -31,7 +31,15 @@ public class SimulatedAnnealing extends OptimizationAlgorithm {
      * The cooling parameter
      */
     private double cooling;
-    
+
+    @Override
+    public String toString() {
+        return "SimulatedAnnealing{" +
+                "t=" + t +
+                ", cooling=" + cooling +
+                '}';
+    }
+
     /**
      * Make a new simulated annealing hill climbing
      * @param t the starting temperature

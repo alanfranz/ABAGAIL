@@ -143,4 +143,12 @@ public class StandardGeneticAlgorithm extends OptimizationAlgorithm {
         return population[best];
     }
 
+    @Override
+    public String toString() {
+        return "StandardGeneticAlgorithm{" +
+                "populationSize=" + populationSize +
+                ", toMate=" + toMate +
+                ", toMutate=" + toMutate +
+                '}';
+    }
 }

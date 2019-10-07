@@ -16,6 +16,8 @@ public class FixedIterationTrainer implements Trainer {
      * The number of iterations to train
      */
     private int iterations;
+    private double[] errorCurve;
+    private double[] cumulativeErrorCurve;
     
     /**
      * Make a new fixed iterations trainer
@@ -25,6 +27,8 @@ public class FixedIterationTrainer implements Trainer {
     public FixedIterationTrainer(Trainer t, int iter) {
         trainer = t;
         iterations = iter;
+        this.errorCurve = new double[iter];
+        this.cumulativeErrorCurve = new double[iter];
     }
 
     /**
@@ -33,10 +37,19 @@ public class FixedIterationTrainer implements Trainer {
     public double train() {
         double sum = 0;
         for (int i = 0; i < iterations; i++) {
-            sum += trainer.train();
+            double train = trainer.train();
+            sum += train;
+            this.errorCurve[i] = train;
+            this.cumulativeErrorCurve[i] = sum/(i+1);
         }
         return sum / iterations;
     }
-    
 
+    public double[] getErrorCurve() {
+        return errorCurve;
+    }
+
+    public double[] getCumulativeErrorCurve() {
+        return cumulativeErrorCurve;
+    }
 }
