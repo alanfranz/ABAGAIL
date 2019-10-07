@@ -1,5 +1,6 @@
 package eu.franzoni.abagail.shared.writer;
 
+import java.io.Closeable;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,7 +15,7 @@ import java.util.List;
  * @date 2013-03-07
  *
  */
-public class CSVWriter implements Writer {
+public class CSVWriter implements Writer, Closeable {
 
     private String fileName;
     private List<String> fields;

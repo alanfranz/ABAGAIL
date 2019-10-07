@@ -17,8 +17,6 @@ import java.io.FileReader;
 import java.text.DecimalFormat;
 import java.util.Scanner;
 
-import static com.sun.tools.doclint.Entity.and;
-
 // Derived from AbaloneTest
 public class NeuralNetworkThings {
     private static Instance[] instances = initializeTrainingInstances();

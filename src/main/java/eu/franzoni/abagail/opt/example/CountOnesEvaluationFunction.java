@@ -1,5 +1,6 @@
 package eu.franzoni.abagail.opt.example;
 
+import eu.franzoni.abagail.opt.MaximizableEvaluationFunction;
 import eu.franzoni.abagail.util.linalg.Vector;
 import eu.franzoni.abagail.opt.EvaluationFunction;
 import eu.franzoni.abagail.shared.Instance;
@@ -9,7 +10,7 @@ import eu.franzoni.abagail.shared.Instance;
  * @author Andrew Guillory gtg008g@mail.gatech.edu
  * @version 1.0
  */
-public class CountOnesEvaluationFunction implements EvaluationFunction {
+public class CountOnesEvaluationFunction implements MaximizableEvaluationFunction {
     /**
      * @see opt.EvaluationFunction#value(opt.OptimizationData)
      */
@@ -22,5 +23,10 @@ public class CountOnesEvaluationFunction implements EvaluationFunction {
             }
         }
         return val;
+    }
+
+    @Override
+    public double findTheoreticalMaximum(int dataSize) {
+        return dataSize;
     }
 }

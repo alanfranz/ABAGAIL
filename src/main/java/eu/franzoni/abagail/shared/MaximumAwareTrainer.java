@@ -3,6 +3,8 @@ package eu.franzoni.abagail.shared;
 import eu.franzoni.abagail.opt.EvaluationFunction;
 import eu.franzoni.abagail.opt.OptimizationAlgorithm;
 
+import java.util.Arrays;
+
 public class MaximumAwareTrainer implements Trainer {
     public static final double EPSILON = 0.0001;
 
@@ -13,6 +15,7 @@ public class MaximumAwareTrainer implements Trainer {
     private final EvaluationFunction ef;
     private Instance latestEvaluationResult;
     private Integer iterationCountAtLatestEvaluation;
+    private final double[] learningCurve;
 
     /**
      * The number of iterations to train
@@ -30,6 +33,8 @@ public class MaximumAwareTrainer implements Trainer {
         this.ef = ef;
         this.maxIterations = iter;
         this.maximumExpectedValue = maximumExpectedValue;
+        this.learningCurve = new double[iter];
+
     }
 
     public double train() {
@@ -38,10 +43,12 @@ public class MaximumAwareTrainer implements Trainer {
             sum += optimizationAlgorithm.train();
             final Instance currentValue = optimizationAlgorithm.getOptimal();
             final double evaluated = ef.value(currentValue);
+            this.learningCurve[i] = evaluated;
             this.latestEvaluationResult = currentValue;
             if (Math.abs(evaluated - maximumExpectedValue) < EPSILON) {
                 System.out.println("Early bailout: " + ef.value(currentValue));
                 iterationCountAtLatestEvaluation = i+1;
+                Arrays.fill(learningCurve, i, maxIterations-1, evaluated);
                 return sum / (i+1);
             };
         }
@@ -55,5 +62,8 @@ public class MaximumAwareTrainer implements Trainer {
 
     public Integer getIterationCountAtLatestEvaluation() {
         return iterationCountAtLatestEvaluation;
+    }
+    public double[] getLearningCurve() {
+        return learningCurve;
     }
 }

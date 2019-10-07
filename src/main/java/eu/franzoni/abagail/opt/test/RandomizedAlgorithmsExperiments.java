@@ -2,6 +2,8 @@ package eu.franzoni.abagail.opt.test;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
 
 import eu.franzoni.abagail.dist.DiscreteDependencyTree;
 import eu.franzoni.abagail.dist.DiscreteUniformDistribution;
@@ -29,18 +31,9 @@ import eu.franzoni.abagail.shared.writer.CSVWriter;
  * @version 1.0
  */
 public class RandomizedAlgorithmsExperiments {
-    /**
-     * The n value
-     */
-    //private static final int N = 30;
-
-    /**
-     * The t value
-     */
-    //private static final int T = N / 10;
     public static void main(String[] args) {
-        final List<Integer> bitstringSizes = Arrays.asList(10, 25, 50, 100);
-        final List<Integer> maxIterationOptions = Arrays.asList(1000, 10000, 100000);
+        final List<Integer> bitstringSizes = Arrays.asList(10, 30, 60, 100);
+        final List<Integer> maxIterationOptions = Arrays.asList(1000, 10000, 50000);
 
         final List<Long> seeds = Arrays.asList(13529634494442651L, 5656981922355810402L
                 , -6449267216724225329L, -4411830362201525141L, 5566798682235319198L, -8758420082094094714L, 3253005473232577707L, -5286286812144096374L, -4119452930045979494L, 5770958020097602318L, 683138933608733263L, 8209964896825328468L, 7031392117777361361L, -6121210489028553847L, -6469731346477625132L, -6665466218042342981L, -5961282655162978163L, 1696770048611725543L, 8029254822252000300L, -942868935122628217L, -2724805368243433498L, 6744958667841432491L, 8992788776112062706L, -267750365740541309L, -4609461931086629707L, -6346129594062662673L, 8303094097110875302L, 8534572557185839709L, -1513711453533974150L, -1988507183983714377L,
@@ -53,30 +46,40 @@ public class RandomizedAlgorithmsExperiments {
                 -9207226534984257761L, -7673201591837605072L, 865598175074152134L, -7256334452322277028L, -7475208512913142686L, -6924067848650035036L, -6415543556141845702L, -640014635566371395L,
                 -1981500378889374518L, -8219243506348948437L, 5146132043411957838L, 6242824757159542603L, -2527691444947296299L, -7829257710384305046L, -3979136175127034588L, -4114460505497727855L, 613711846571433146L);
 
-        final CSVWriter csvWriter = new CSVWriter("experiment_" + System.currentTimeMillis() + ".csv", new String[]{"group", "bitstringSize", "algorithm", "evaluationFunction",
-                "maximumIterations", "actualIterations",
-                "maximumTheoreticalValue", "actualValue", "executionTimeMillis"
-        });
-        final double perc = 0.1;
+        try (
+                final CSVWriter csvWriter = new CSVWriter("randomized_algorithms_experiment_" + System.currentTimeMillis() + ".csv", new String[]{
+                        "group",
+                        "bitstringSize",
+                        "algorithm",
+                        "evaluationFunction",
+                        "maximumIterations",
+                        "actualIterations",
+                        "maximumTheoreticalValue",
+                        "actualValue",
+                        "executionTimeMillis",
+                        "learningCurve"
+                })) {
+            final double perc = 0.1;
 
-        int groupIndex = 0; // only seed changes within the same groupIndex
+            int groupIndex = 0; // only seed changes within the same groupIndex
 
-        for (Integer iterations : maxIterationOptions) {
-            for (Integer N : bitstringSizes) {
-                for (Long seed : seeds) {
-                    final int T = (int) Math.round(N * perc);
-                    System.out.println("Array size: " + N + " T%: " + perc);
-                    MyRandom.initialize(seed);
-                    doYourCalculations(N, groupIndex, iterations, new FourPeaksEvaluationFunction(T), csvWriter);
-                    doYourCalculations(N, groupIndex, iterations, new SixPeaksEvaluationFunction(T), csvWriter);
-                    doYourCalculations(N, groupIndex, iterations, new FlipFlopEvaluationFunction(), csvWriter);
-                    System.out.println("--------------");
+            for (Integer iterations : maxIterationOptions) {
+                for (Integer N : bitstringSizes) {
+                    for (Long seed : seeds) {
+                        final int T = (int) Math.round(N * perc);
+                        System.out.println("Array size: " + N + " T%: " + perc);
+                        MyRandom.initialize(seed);
+                        doYourCalculations(N, groupIndex, iterations, new FourPeaksEvaluationFunction(T), csvWriter);
+                        doYourCalculations(N, groupIndex, iterations, new SixPeaksEvaluationFunction(T), csvWriter);
+                        doYourCalculations(N, groupIndex, iterations, new FlipFlopEvaluationFunction(), csvWriter);
+                        doYourCalculations(N, groupIndex, iterations, new CountOnesEvaluationFunction(), csvWriter);
+                        System.out.println("--------------");
+                    }
+                    groupIndex += 1;
                 }
-                groupIndex += 1;
             }
-        }
 
-        csvWriter.close();
+        }
     }
 
     private static void doYourCalculations(int N, int groupIndex, int maximumIterations, MaximizableEvaluationFunction ef, CSVWriter csvWriter) {
@@ -99,7 +102,7 @@ public class RandomizedAlgorithmsExperiments {
 
         csvWriter.writeMany(Integer.toString(groupIndex), Integer.toString(N), "RHC", evaluationFunctionName, Integer.toString(maximumIterations),
                 Integer.toString(fit.getIterationCountAtLatestEvaluation()), Double.toString(ef.findTheoreticalMaximum(N)), Double.toString(ef.value(fit.getLatestEvaluationResult())),
-                Long.toString(rhcMillis));
+                Long.toString(rhcMillis), serializeLearningCurve(fit));
 
         // SA
         SimulatedAnnealing sa = new SimulatedAnnealing(1E11, .95, hcp);
@@ -108,9 +111,10 @@ public class RandomizedAlgorithmsExperiments {
         final long saMillis = benchmarkMillis(fit);
         System.out.println("SA: " + ef.value(fit.getLatestEvaluationResult()) + " iterations: " + fit.getIterationCountAtLatestEvaluation() + " time(ms): " + saMillis);
 
+
         csvWriter.writeMany(Integer.toString(groupIndex), Integer.toString(N), "SA", evaluationFunctionName, Integer.toString(maximumIterations),
                 Integer.toString(fit.getIterationCountAtLatestEvaluation()), Double.toString(ef.findTheoreticalMaximum(N)), Double.toString(ef.value(fit.getLatestEvaluationResult())),
-                Long.toString(saMillis));
+                Long.toString(saMillis), serializeLearningCurve(fit));
 
         // GA
         CrossoverFunction cf = new SingleCrossOver();
@@ -123,7 +127,7 @@ public class RandomizedAlgorithmsExperiments {
         System.out.println("GA: " + ef.value(fit.getLatestEvaluationResult()) + " iterations: " + fit.getIterationCountAtLatestEvaluation() + " time(ms): " + gaMillis);
         csvWriter.writeMany(Integer.toString(groupIndex), Integer.toString(N), "GA", evaluationFunctionName, Integer.toString(maximumIterations),
                 Integer.toString(fit.getIterationCountAtLatestEvaluation()), Double.toString(ef.findTheoreticalMaximum(N)), Double.toString(ef.value(fit.getLatestEvaluationResult())),
-                Long.toString(gaMillis));
+                Long.toString(gaMillis), serializeLearningCurve(fit));
 
         // MIMIC
         ProbabilisticOptimizationProblem pop = new GenericProbabilisticOptimizationProblem(ef, odd, df);
@@ -134,8 +138,12 @@ public class RandomizedAlgorithmsExperiments {
 
         csvWriter.writeMany(Integer.toString(groupIndex), Integer.toString(N), "MIMIC", evaluationFunctionName, Integer.toString(maximumIterations),
                 Integer.toString(fit.getIterationCountAtLatestEvaluation()), Double.toString(ef.findTheoreticalMaximum(N)), Double.toString(ef.value(fit.getLatestEvaluationResult())),
-                Long.toString(mimicMillis));
+                Long.toString(mimicMillis), serializeLearningCurve(fit));
 
+    }
+
+    private static String serializeLearningCurve(MaximumAwareTrainer fit) {
+        return Arrays.stream(fit.getLearningCurve()).mapToObj(Double::toString).collect(Collectors.joining(";"));
     }
 
     private static long benchmarkMillis(MaximumAwareTrainer trainer) {
