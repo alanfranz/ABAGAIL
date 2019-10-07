@@ -76,7 +76,6 @@ public class FourPeaksTest {
             }
         }
 
-
         csvWriter.close();
     }
 
