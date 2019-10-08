@@ -1,4 +1,7 @@
 package eu.franzoni.abagail.shared;
+
+import java.util.Arrays;
+
 /**
  * A convergence trainer trains a network
  * until convergence, using another trainer
@@ -30,6 +33,7 @@ public class ConvergenceTrainer implements Trainer {
      * The maximum number of iterations to use
      */
     private int maxIterations;
+    private double[] errorCurve;
 
     /**
      * Create a new convergence trainer
@@ -42,6 +46,7 @@ public class ConvergenceTrainer implements Trainer {
         this.trainer = trainer;
         this.threshold = threshold;
         this.maxIterations = maxIterations;
+        this.errorCurve = new double[maxIterations];
     }
     
 
@@ -67,11 +72,19 @@ public class ConvergenceTrainer implements Trainer {
            iterations++;
            lastError = error;
            error = trainer.train();
+           this.errorCurve[iterations-1] = error;
         } while (Math.abs(error - lastError) > threshold
              && iterations < maxIterations);
+        if (iterations < maxIterations) {
+            Arrays.fill(errorCurve, iterations-1, maxIterations, error);
+        }
         return error;
     }
-    
+
+    public double[] getErrorCurve() {
+        return errorCurve;
+    }
+
     /**
      * Get the number of iterations used
      * @return the number of iterations
