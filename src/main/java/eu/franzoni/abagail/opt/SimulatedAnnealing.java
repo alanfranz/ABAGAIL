@@ -36,7 +36,7 @@ public class SimulatedAnnealing extends OptimizationAlgorithm {
     public String toString() {
         return "SimulatedAnnealing{" +
                 "t=" + t +
-                ", cooling=" + cooling +
+                "; cooling=" + cooling +
                 '}';
     }
 
@@ -67,7 +67,7 @@ public class SimulatedAnnealing extends OptimizationAlgorithm {
             cur = neigh;
         }
         t *= cooling;
-        return curVal;
+        return 1 / curVal;
     }
 
     /**

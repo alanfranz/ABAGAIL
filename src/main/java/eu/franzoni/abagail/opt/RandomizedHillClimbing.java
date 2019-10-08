@@ -28,6 +28,11 @@ public class RandomizedHillClimbing extends OptimizationAlgorithm {
         curVal = hcp.value(cur);
     }
 
+    @Override
+    public String toString() {
+        return "RandomizedHillClimbing{}";
+    }
+
     /**
      * @see shared.Trainer#train()
      */
@@ -39,7 +44,7 @@ public class RandomizedHillClimbing extends OptimizationAlgorithm {
             curVal = neighVal;
             cur = neigh;
         }
-        return curVal;
+        return 1 / curVal;
     }
 
     /**

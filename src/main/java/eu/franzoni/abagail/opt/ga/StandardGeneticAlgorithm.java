@@ -123,7 +123,7 @@ public class StandardGeneticAlgorithm extends OptimizationAlgorithm {
         // the new generation
         population = newPopulation;
         values = newValues;
-        return sum / populationSize;
+        return 1 / (sum / populationSize);
     }
 
     /**
@@ -147,8 +147,8 @@ public class StandardGeneticAlgorithm extends OptimizationAlgorithm {
     public String toString() {
         return "StandardGeneticAlgorithm{" +
                 "populationSize=" + populationSize +
-                ", toMate=" + toMate +
-                ", toMutate=" + toMutate +
+                "; toMate=" + toMate +
+                "; toMutate=" + toMutate +
                 '}';
     }
 }

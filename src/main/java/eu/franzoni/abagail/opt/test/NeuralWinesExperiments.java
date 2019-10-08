@@ -9,7 +9,10 @@ import eu.franzoni.abagail.func.nn.feedfwd.FeedForwardNetwork;
 import eu.franzoni.abagail.func.nn.feedfwd.FeedForwardNeuralNetworkFactory;
 import eu.franzoni.abagail.opt.EvaluationFunction;
 import eu.franzoni.abagail.opt.OptimizationAlgorithm;
+import eu.franzoni.abagail.opt.RandomizedHillClimbing;
+import eu.franzoni.abagail.opt.SimulatedAnnealing;
 import eu.franzoni.abagail.opt.example.NeuralNetworkOptimizationProblem;
+import eu.franzoni.abagail.opt.ga.StandardGeneticAlgorithm;
 import eu.franzoni.abagail.shared.*;
 import eu.franzoni.abagail.shared.tester.*;
 import eu.franzoni.abagail.shared.writer.CSVWriter;
@@ -52,7 +55,7 @@ public class NeuralWinesExperiments {
     private static final int[] LABELS = new int[]{0, 1};
 
     private static final Instance[] allTrainingInstances = parseInstancesFromFile(3918, "whitewines-zscored-train.csv");
-    private static final Instance[] testInstances = parseInstancesFromFile(980, "whitewines-zscored-test.csv");
+    private static final Instance[] globalTestInstances = parseInstancesFromFile(980, "whitewines-zscored-test.csv");
 
     private static final List<Fold> folds = Arrays.asList(
             Fold.fromFiles(3133, "wines-fold1-train.csv", 785, "wines-fold1-test.csv"),
@@ -63,11 +66,11 @@ public class NeuralWinesExperiments {
     );
 
 
-
     public static void main(String[] args) {
         MyRandom.initialize(3537010315L);
-        final List<Integer> maxIterationOptions = Arrays.asList(500, 1000, 5000, 10000);
-//        final List<Long> seeds = Arrays.asList(13529634494442651L, 5656981922355810402L
+
+
+//
 //                , -6449267216724225329L, -4411830362201525141L, 5566798682235319198L, -8758420082094094714L, 3253005473232577707L, -5286286812144096374L, -4119452930045979494L, 5770958020097602318L, 683138933608733263L, 8209964896825328468L, 7031392117777361361L, -6121210489028553847L, -6469731346477625132L, -6665466218042342981L, -5961282655162978163L, 1696770048611725543L, 8029254822252000300L, -942868935122628217L, -2724805368243433498L, 6744958667841432491L, 8992788776112062706L, -267750365740541309L, -4609461931086629707L, -6346129594062662673L, 8303094097110875302L, 8534572557185839709L, -1513711453533974150L, -1988507183983714377L,
 //                -4771493155960262495L, -1606160883395982541L, 2578644751320052306L, 9110929450740901209L, 717207449707688923L, 2848358714595589750L, -3302511082686917161L, 559566510816032781L, -6245497221226436475L,
 //                -6040228022713241920L, -5942417874383785695L, -8729688670016265721L, -4461026529614911420L, 4216892117723149175L, 7183285063220747610L, 5718428447980185135L, 3231711550978164945L, -7674679440764368227L,
@@ -83,12 +86,20 @@ public class NeuralWinesExperiments {
         // to dump to csv: "iterations", "algorithmWithParams", "errorCurve", "true-positive", "true-negative", "false-positive", "false-negative", "time"
         int groupIndex = 0;
 
+        final List<Integer> maxIterationOptions = Arrays.asList(500, 1000, 5000, 10000);
+
+        final List<Integer> populationSizes = Arrays.asList(400, 4000);
+        final List<Integer> mateFactors = Arrays.asList(100, 200);
+        final List<Integer> mutateFactors = Arrays.asList(100, 200);
+
+        final List<Double> coolingFactors = Arrays.asList(0.30, 0.60, 0.95);
+        final List<Double> temperatureFactors = Arrays.asList(1e4, 1e7, 1e11);
+
         try (
                 CSVWriter csvWriter = new CSVWriter(filename, new String[]{
                         "group",
                         "description",
                         "algorithmWithParams",
-                        "errorCurve",
                         "maximumIterations",
                         "actualIterations",
                         "trainingTruePositives",
@@ -99,41 +110,44 @@ public class NeuralWinesExperiments {
                         "validationTrueNegatives",
                         "validationFalsePositives",
                         "validationFalseNegatives",
-                        "testTruePositives",
-                        "testTrueNegatives",
-                        "testFalsePositives",
-                        "testFalseNegatives",
-                        "executionTimeMillis"
+                        "globalTestTruePositives",
+                        "globalTestTrueNegatives",
+                        "globalTestFalsePositives",
+                        "globalTestFalseNegatives",
+                        "executionTimeMillis",
+                        "errorCurve",
                 })) {
 
             for (Integer iterations : maxIterationOptions) {
-                csvWriter.write(Integer.toString(groupIndex));
-                csvWriter.write("fold1");
-                trainWithBackpropagation(iterations, folds.get(0), csvWriter);
+                for (int index = 0; index < folds.size(); index++) {
+                    csvWriter.write(Integer.toString(groupIndex));
+                    csvWriter.write(String.format("fold%d", index + 1));
+                    trainWithBackpropagation(iterations, folds.get(index), csvWriter);
+
+                    trainFeedForwardWithOptimizationAlgorithm(nno -> new RandomizedHillClimbing(nno), iterations, folds.get(index), csvWriter);
+
+                    for (Integer populationSize : populationSizes) {
+                        for (Integer mutateFactor : mutateFactors) {
+                            for (Integer mateFactor : mateFactors) {
+                                csvWriter.write(Integer.toString(groupIndex));
+                                csvWriter.write(String.format("fold%d", index + 1));
+                                trainFeedForwardWithOptimizationAlgorithm(nno -> new StandardGeneticAlgorithm(populationSize, mateFactor, mutateFactor, nno), iterations, folds.get(index), csvWriter);
+                            }
+                        }
+                    }
+
+                    for (Double temperatureFactor : temperatureFactors) {
+                        for (Double coolingFactor : coolingFactors) {
+                            csvWriter.write(Integer.toString(groupIndex));
+                            csvWriter.write(String.format("fold%d", index + 1));
+                            trainFeedForwardWithOptimizationAlgorithm(nno -> new SimulatedAnnealing(temperatureFactor, coolingFactor, nno), iterations, folds.get(index), csvWriter);
+                        }
+                    }
+
+
+                }
             }
-
-
         }
-
-
-//        System.out.println("BACKPROP " + System.nanoTime());
-//
-//        System.out.println("RHC " + System.nanoTime());
-//        trainFeedForwardWithOptimizationAlgorithm(nno -> new RandomizedHillClimbing(nno), 10000);
-//        System.out.println("GA " + System.nanoTime());
-//
-//        final List<Integer> populationSizes = Arrays.asList(400, 4000);
-//        final List<Integer> mateFactors = Arrays.asList(100, 200);
-//        final List<Integer> mutateFactors = Arrays.asList(100, 200);
-//
-//        trainFeedForwardWithOptimizationAlgorithm(nno -> new StandardGeneticAlgorithm(4000, 200, 200, nno), 10000);
-//        System.out.println("SA " + System.nanoTime());
-//
-//        final List<Double> coolingFactors = Arrays.asList(0.30, 0.60, 0.95);
-//        final List<Double> temperatureFactors = Arrays.asList(1e5, 1e10, 1e15);
-//
-//
-//        trainFeedForwardWithOptimizationAlgorithm(nno -> new SimulatedAnnealing(1e11, 0.95, nno), 10000);
     }
 
 
@@ -173,99 +187,65 @@ public class NeuralWinesExperiments {
     }
 
 
-    public static void trainFeedForwardWithOptimizationAlgorithm(Function<NeuralNetworkOptimizationProblem, OptimizationAlgorithm> optimizationFactory, int iterations) {
+    public static void trainFeedForwardWithOptimizationAlgorithm(Function<NeuralNetworkOptimizationProblem, OptimizationAlgorithm> optimizationFactory, int maximumIterations, Fold fold, CSVWriter writer) {
+        final FeedForwardNeuralNetworkFactory factory = new FeedForwardNeuralNetworkFactory();
+        final FeedForwardNetwork network = factory.createClassificationNetwork(LAYERS, new Rectifier());
+        final ErrorMeasure measure = new SumOfSquaresError();
 
-//        }
-
-
-        final Instance[] patterns = allTrainingInstances;
-
-        // 2) Instantiate a network using the FeedForwardNeuralNetworkFactory.  This network
-        //    will be our classifier.
-        FeedForwardNeuralNetworkFactory factory = new FeedForwardNeuralNetworkFactory();
-        // 2a) These numbers correspond to the number of nodes in each layer.
-        //     This network has 4 input nodes, 3 hidden nodes in 1 layer, and 1 output node in the output layer.
-        FeedForwardNetwork network = factory.createClassificationNetwork(new int[]{FEATURE_COUNT, 10, 5, 1}, new Rectifier());
-
-        // 3) Instantiate a measure, which is used to evaluate each possible set of weights.
-        ErrorMeasure measure = new SumOfSquaresError();
-
-        // 4) Instantiate a DataSet, which adapts a set of instances to the optimization problem.
-        DataSet set = new DataSet(patterns);
-
-        // 5) Instantiate an optimization problem, which is used to specify the dataset, evaluation
-        //    function, mutator and crossover function (for Genetic Algorithms), and any other
-        //    parameters used in optimization.
+        DataSet set = new DataSet(fold.train);
         NeuralNetworkOptimizationProblem nno = new NeuralNetworkOptimizationProblem(
                 set, network, measure);
-
-        // 6) Instantiate a specific OptimizationAlgorithm, which defines how we pick our next potential
-        //    hypothesis.
         OptimizationAlgorithm o = optimizationFactory.apply(nno);
-        System.out.printf("OptimizationAlgorithm: %s", o);
+        final FixedIterationTrainer fit = new FixedIterationTrainer(o, maximumIterations);
 
+        final long executionTimeMillis = benchmarkMillis(fit);
 
-        // 7) Instantiate a trainer.  The FixtIterationTrainer takes another trainer (in this case,
-        //    an OptimizationAlgorithm) and executes it a specified number of times.
-        FixedIterationTrainer fit = new FixedIterationTrainer(o, iterations);
-
-        // 8) Run the trainer.  This may take a little while to run, depending on the OptimizationAlgorithm,
-        //    size of the data, and number of iterations.
-        long howlong = benchmarkMillis(fit);
-
-        // 9) Once training is done, get the optimal solution from the OptimizationAlgorithm.  These are the
-        //    optimal weights found for this network.
         Instance opt = o.getOptimal();
         network.setWeights(opt.getData());
 
-        //10) Run the training data through the network with the weights discovered through optimization, and
-        //    print out the expected label and result of the classifier for each instance.
-        TestMetric acc = new AccuracyTestMetric();
-        TestMetric cm = new ConfusionMatrixTestMetric(LABELS);
-        Tester t = new BinaryOutputNeuralNetworkTester(network, acc, cm);
-        t.test(patterns);
+        writer.write(o.toString());
+        writer.write(Integer.toString(maximumIterations));
+        writer.write(Integer.toString(maximumIterations));
 
-        acc.printResults();
-        cm.printResults();
+        dumpResults(network, fold.train, writer);
+        dumpResults(network, fold.validation, writer);
+        dumpResults(network, globalTestInstances, writer);
+
+        writer.write(Long.toString(executionTimeMillis));
+        writer.write(serializeErrorCurve(fit));
+        writer.nextRecord();
     }
 
     public static FeedForwardNetwork trainWithBackpropagation(int maximumIterations, Fold fold, CSVWriter writer) {
 
         final BackPropagationNetworkFactory factory = new BackPropagationNetworkFactory();
-
         final BackPropagationNetwork network = factory.createClassificationNetwork(LAYERS, new Rectifier());
         final SumOfSquaresError measure = new SumOfSquaresError();
         final DataSet set = new DataSet(fold.train);
-        final  BatchBackPropagationTrainer batchBackPropagationTrainer = new BatchBackPropagationTrainer(set, network, measure, new RPROPUpdateRule(0.01, 50, 0.00001));
+        final BatchBackPropagationTrainer batchBackPropagationTrainer = new BatchBackPropagationTrainer(set, network, measure, new RPROPUpdateRule(0.01, 50, 0.00001));
         final ConvergenceTrainer fit = new ConvergenceTrainer(batchBackPropagationTrainer, maximumIterations);
-        long executionTimeMillis = benchmarkMillis(fit);
-
-
-
+        final long executionTimeMillis = benchmarkMillis(fit);
 
         writer.write("BackPropagation");
-        writer.write(serializeErrorCurve(fit));
         writer.write(Integer.toString(maximumIterations));
         writer.write(Integer.toString(fit.getIterations()));
-
-
-
 
 
         //10) Run the training data through the network with the weights discovered through optimization, and
         //    print out the expected label and result of the classifier for each instance.
         dumpResults(network, fold.train, writer);
         dumpResults(network, fold.validation, writer);
-        dumpResults(network, testInstances, writer);
+        dumpResults(network, globalTestInstances, writer);
 
         writer.write(Long.toString(executionTimeMillis));
+        writer.write(serializeErrorCurve(fit));
         writer.nextRecord();
 
 
         return network;
     }
 
-    private static void dumpResults(BackPropagationNetwork network, Instance[] instances, CSVWriter writer) {
+    private static void dumpResults(FeedForwardNetwork network, Instance[] instances, CSVWriter writer) {
         MultipleCountTestMetric mctc = new MultipleCountTestMetric();
         TestMetric cm = new ConfusionMatrixTestMetric(LABELS);
         Tester t = new BinaryOutputNeuralNetworkTester(network, mctc, cm);
@@ -282,6 +262,10 @@ public class NeuralWinesExperiments {
     }
 
     private static String serializeErrorCurve(ConvergenceTrainer fit) {
+        return Arrays.stream(fit.getErrorCurve()).mapToObj(Double::toString).collect(Collectors.joining(";"));
+    }
+
+    private static String serializeErrorCurve(FixedIterationTrainer fit) {
         return Arrays.stream(fit.getErrorCurve()).mapToObj(Double::toString).collect(Collectors.joining(";"));
     }
 
