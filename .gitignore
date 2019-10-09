@@ -5,3 +5,4 @@ devenv/
 *.pyc
 *.pyo
 __pycache__/
+*.feather
