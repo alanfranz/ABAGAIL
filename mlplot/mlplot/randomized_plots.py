@@ -1,6 +1,7 @@
 from mlplot.load import load_randomized_algos
 from itertools import product
 import pandas as pd
+from matplotlib.pyplot import show, savefig
 
 # POSSIBLE IMPROVEMENT: PLOT STANDARD DEVIATION AS WELL
 
@@ -38,6 +39,18 @@ if __name__ == "__main__":
     ax = all_curves.plot(title="FourPeaks avg fitness vs iterations, 60-bit")
     ax.set_xlabel("iterations")
     ax.set_ylabel("avg fitness")
-    from matplotlib.pyplot import show
-    show()
+    ax.get_figure().savefig("fourpeaks-fitness-average.png")
+
+    all_curves = plot_learning_curve("SixPeaksEvaluationFunction")
+    ax = all_curves.plot(title="SixPeaks avg fitness vs iterations, 60-bit")
+    ax.set_xlabel("iterations")
+    ax.set_ylabel("avg fitness")
+    ax.get_figure().savefig("sixpeaks-fitness-average.png")
+
+    all_curves = plot_learning_curve("FlipFlopEvaluationFunction")
+    ax = all_curves.plot(title="FlipFlop avg fitness vs iterations, 60-bit")
+    ax.set_xlabel("iterations")
+    ax.set_ylabel("avg fitness")
+    ax.get_figure().savefig("flipflop-fitness-average.png")
+
 
