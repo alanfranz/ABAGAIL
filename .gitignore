@@ -1,3 +1,7 @@
 .idea/
 target/
 *.class
+devenv/
+*.pyc
+*.pyo
+__pycache__/
