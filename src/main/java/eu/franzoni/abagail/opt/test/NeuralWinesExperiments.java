@@ -92,8 +92,8 @@ public class NeuralWinesExperiments {
         final List<Integer> mateFactors = Arrays.asList(100, 200);
         final List<Integer> mutateFactors = Arrays.asList(100, 200);
 
-        final List<Double> coolingFactors = Arrays.asList(0.30, 0.60, 0.95);
-        final List<Double> temperatureFactors = Arrays.asList(1e4, 1e7, 1e11);
+        final List<Double> coolingFactors = Arrays.asList(0.50, 0.95);
+        final List<Double> temperatureFactors = Arrays.asList(1e7, 1e11);
 
         try (
                 CSVWriter csvWriter = new CSVWriter(filename, new String[]{
@@ -119,11 +119,15 @@ public class NeuralWinesExperiments {
                 })) {
 
             for (Integer iterations : maxIterationOptions) {
-                for (int index = 0; index < folds.size(); index++) {
+                   for (int index = 0; index < folds.size(); index++) {
+
+                    MyRandom.initialize(3537010315L);
                     csvWriter.write(Integer.toString(groupIndex));
                     csvWriter.write(String.format("fold%d", index + 1));
                     trainWithBackpropagation(iterations, folds.get(index), csvWriter);
 
+                    csvWriter.write(Integer.toString(groupIndex));
+                    csvWriter.write(String.format("fold%d", index + 1));
                     trainFeedForwardWithOptimizationAlgorithm(nno -> new RandomizedHillClimbing(nno), iterations, folds.get(index), csvWriter);
 
                     for (Integer populationSize : populationSizes) {
@@ -196,6 +200,7 @@ public class NeuralWinesExperiments {
         NeuralNetworkOptimizationProblem nno = new NeuralNetworkOptimizationProblem(
                 set, network, measure);
         OptimizationAlgorithm o = optimizationFactory.apply(nno);
+        writer.write(o.toString());
         final FixedIterationTrainer fit = new FixedIterationTrainer(o, maximumIterations);
 
         final long executionTimeMillis = benchmarkMillis(fit);
@@ -203,7 +208,7 @@ public class NeuralWinesExperiments {
         Instance opt = o.getOptimal();
         network.setWeights(opt.getData());
 
-        writer.write(o.toString());
+
         writer.write(Integer.toString(maximumIterations));
         writer.write(Integer.toString(maximumIterations));
 
