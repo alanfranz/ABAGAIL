@@ -8,14 +8,31 @@ RANDOMIZED_ALGORITHMS_OUT_FN = os.path.join(os.path.dirname(os.path.realpath(__f
                                             "experiments_output", "randomized_algorithms",
                                             "randomized_algorithms_experiment_output.csv.gz")
 
+# columns:
+"group",
+"bitstringSize",
+"algorithm",
+"evaluationFunction",
+"maximumIterations",
+"actualIterations",
+"maximumTheoreticalValue",
+"actualValue",
+"executionTimeMillis",
+"learningCurve"
 
-def load():
+
+def load_randomized_algos():
     try:
         return pd.read_feather("randomized_out.feather")
     except IOError:
         warnings.warn("Could not find optimized feather file, using csv")
-        return pd.read_csv(RANDOMIZED_ALGORITHMS_OUT_FN, sep=",", header=0)
+        df = pd.read_csv(RANDOMIZED_ALGORITHMS_OUT_FN, sep=",", header=0)
+        #df.to_feather("randomized_out.feather")
+        return df
 
 if __name__ == "__main__":
-    x = load()
+    df = load_randomized_algos()
+    df[(df["bitstringSize"] == 10) & (df["algorithm"] == "RHC")]
+    #df["bitstringSize"]
+
     pass
