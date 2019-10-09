@@ -17,26 +17,25 @@ def dothings():
 
     out = sys.stdout
 
-    LATEX_HEADER = r"\begin{longtable}{l|c|c|c}" + "\n"
+    LATEX_HEADER = r"\begin{longtable}{l c c c c}" + "\n"
     LATEX_FOOTER = r"\end{longtable}" + "\n"
 
     for func in ef:
         out.write(LATEX_HEADER)
         funcname = func.rsplit("EvaluationFunction")[0]
-        out.write(f"\\caption{{{funcname}}} results\\\\\n")
+        out.write(f"\\caption{{{funcname} results}}\\\\\n")
 
-
-        out.write(f"Algorithm-InputSize & 1,000 iter (opt/5pc) & 10,000 iter (opt/5pc) & 50,000 iter (opt/5pc) \\\\\n")
+        out.write(f"Algorithm-Iterations & 10 (opt/5pc) & 30 (opt/5pc) & 60 (opt/5pc) & 100 (opt/5pc) \\\\\n")
         out.write("\\hline\n")
 
-        for algo, size in product(algos, sizes):
+        for algo, maxIter in product(algos, maxIterations):
             current_df = df[
-                (df["algorithm"] == algo) & (df["bitstringSize"] == size) & (df["evaluationFunction"] == func)]
+                (df["algorithm"] == algo) & (df["maximumIterations"] == maxIter) & (df["evaluationFunction"] == func)]
 
-            out.write(f"{algo}-{size}")
+            out.write(f"{algo}-{maxIter}")
 
-            for maxIter in maxIterations:
-                iter_df = current_df[current_df["maximumIterations"] == maxIter]
+            for size in sizes:
+                iter_df = current_df[current_df["bitstringSize"] == size]
                 reaches_optimum = iter_df[iter_df["actualValue"] == iter_df["maximumTheoreticalValue"]].shape[0] / \
                                   iter_df.shape[0]
                 within_5p_optimum = \
