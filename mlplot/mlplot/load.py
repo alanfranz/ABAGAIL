@@ -8,6 +8,10 @@ RANDOMIZED_ALGORITHMS_OUT_FN = os.path.join(os.path.dirname(os.path.realpath(__f
                                             "experiments_output", "randomized_algorithms",
                                             "randomized_algorithms_experiment_output.csv.gz")
 
+NN_OUT_FN = os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir, os.pardir,
+                                            "experiments_output", "neural",
+                                            "neural.csv")
+
 # columns:
 "group",
 "bitstringSize",
@@ -30,9 +34,11 @@ def load_randomized_algos():
         #df.to_feather("randomized_out.feather")
         return df
 
+def load_neural_networks():
+    return pd.read_csv(NN_OUT_FN, sep=",", header=0)
+
+
 if __name__ == "__main__":
-    df = load_randomized_algos()
-    df[(df["bitstringSize"] == 10) & (df["algorithm"] == "RHC")]
-    #df["bitstringSize"]
+    df = load_neural_networks()
 
     pass
