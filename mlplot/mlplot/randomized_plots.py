@@ -13,7 +13,7 @@ ALGOS = ('RHC', 'SA', 'GA', 'MIMIC')
 def savefigure(ax, filename):
     homedir = os.getenv("HOME")
     dropbox_out = os.path.join(homedir, "Dropbox", "gatech", "ml", "assignment2", "img", filename)
-    ax.get_figure().savefig(filename)
+    ax.get_figure().savefig(os.path.join("img", filename))
     try:
         ax.get_figure().savefig(dropbox_out)
     except:

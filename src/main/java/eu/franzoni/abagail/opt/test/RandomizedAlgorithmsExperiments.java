@@ -125,16 +125,16 @@ public class RandomizedAlgorithmsExperiments {
 //                Long.toString(rhcMillis), serializeLearningCurve(fit));
 
         // SA
-        SimulatedAnnealing sa = new SimulatedAnnealing(1E11, .95, hcp);
+        SimulatedAnnealing sa = new SimulatedAnnealing(1E15, .99, hcp);
         fit = new MaximumAwareTrainer(sa, ef, ef.findTheoreticalMaximum(N), maximumIterations);
 
-//        final long saMillis = benchmarkMillis(fit);
-//        System.out.println("SA: " + ef.value(fit.getLatestEvaluationResult()) + " iterations: " + fit.getIterationCountAtLatestEvaluation() + " time(ms): " + saMillis);
-//
-//
-//        csvWriter.writeMany(Integer.toString(groupIndex), Integer.toString(N), "SA", evaluationFunctionName, Integer.toString(maximumIterations),
-//                Integer.toString(fit.getIterationCountAtLatestEvaluation()), Double.toString(ef.findTheoreticalMaximum(N)), Double.toString(ef.value(fit.getLatestEvaluationResult())),
-//                Long.toString(saMillis), serializeLearningCurve(fit));
+        final long saMillis = benchmarkMillis(fit);
+        System.out.println("SA: " + ef.value(fit.getLatestEvaluationResult()) + " iterations: " + fit.getIterationCountAtLatestEvaluation() + " time(ms): " + saMillis);
+
+
+        csvWriter.writeMany(Integer.toString(groupIndex), Integer.toString(N), "SA", evaluationFunctionName, Integer.toString(maximumIterations),
+                Integer.toString(fit.getIterationCountAtLatestEvaluation()), Double.toString(ef.findTheoreticalMaximum(N)), Double.toString(ef.value(fit.getLatestEvaluationResult())),
+                Long.toString(saMillis), serializeLearningCurve(fit));
 
         // GA
         CrossoverFunction cf = new SingleCrossOver();
@@ -153,12 +153,12 @@ public class RandomizedAlgorithmsExperiments {
         ProbabilisticOptimizationProblem pop = new GenericProbabilisticOptimizationProblem(ef, odd, df);
         MIMIC mimic = new MIMIC(2000, 200, pop);
         fit = new MaximumAwareTrainer(mimic, ef, ef.findTheoreticalMaximum(N), maximumIterations);
-        final long mimicMillis = benchmarkMillis(fit);
-        System.out.println("MIMIC: " + ef.value(fit.getLatestEvaluationResult()) + " iterations: " + fit.getIterationCountAtLatestEvaluation() + " time(ms): " + mimicMillis);
-
-        csvWriter.writeMany(Integer.toString(groupIndex), Integer.toString(N), "MIMIC", evaluationFunctionName, Integer.toString(maximumIterations),
-                Integer.toString(fit.getIterationCountAtLatestEvaluation()), Double.toString(ef.findTheoreticalMaximum(N)), Double.toString(ef.value(fit.getLatestEvaluationResult())),
-                Long.toString(mimicMillis), serializeLearningCurve(fit));
+//        final long mimicMillis = benchmarkMillis(fit);
+//        System.out.println("MIMIC: " + ef.value(fit.getLatestEvaluationResult()) + " iterations: " + fit.getIterationCountAtLatestEvaluation() + " time(ms): " + mimicMillis);
+//
+//        csvWriter.writeMany(Integer.toString(groupIndex), Integer.toString(N), "MIMIC", evaluationFunctionName, Integer.toString(maximumIterations),
+//                Integer.toString(fit.getIterationCountAtLatestEvaluation()), Double.toString(ef.findTheoreticalMaximum(N)), Double.toString(ef.value(fit.getLatestEvaluationResult())),
+//                Long.toString(mimicMillis), serializeLearningCurve(fit));
 
     }
 
