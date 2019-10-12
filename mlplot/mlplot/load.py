@@ -12,6 +12,11 @@ NN_OUT_FN = os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir,
                                             "experiments_output", "neural",
                                             "neural.csv")
 
+NN_TRAINING_OUT_FN = os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir, os.pardir,
+                                            "experiments_output", "neural",
+                                            "neural-alltraining.csv")
+
+
 # columns:
 "group",
 "bitstringSize",
@@ -37,8 +42,11 @@ def load_randomized_algos():
 def load_neural_networks():
     return pd.read_csv(NN_OUT_FN, sep=",", header=0)
 
+def load_neural_networks_training():
+    return pd.read_csv(NN_TRAINING_OUT_FN, sep=",", header=0)
+
 
 if __name__ == "__main__":
-    df = load_neural_networks()
+    df = load_neural_networks_training()
 
     pass
