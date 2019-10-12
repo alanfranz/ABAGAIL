@@ -42,13 +42,10 @@ def plot_learning_curve(func):
 
 
 
-
-
-
 if __name__ == "__main__":
     for func in ["FourPeaksEvaluationFunction", "SixPeaksEvaluationFunction",
                  "FlipFlopEvaluationFunction"]:
-        all_curves, max_value = plot_learning_curve("FourPeaksEvaluationFunction")
+        all_curves, max_value = plot_learning_curve(func)
 
         for algo in ALGOS:
             funcname = func.rsplit('EvaluationFunction')[0]

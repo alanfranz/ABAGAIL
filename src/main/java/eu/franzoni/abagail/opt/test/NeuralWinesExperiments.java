@@ -19,6 +19,7 @@ import eu.franzoni.abagail.shared.writer.CSVWriter;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
@@ -62,7 +63,8 @@ public class NeuralWinesExperiments {
             Fold.fromFiles(3134, "wines-fold2-train.csv", 784, "wines-fold2-test.csv"),
             Fold.fromFiles(3135, "wines-fold3-train.csv", 783, "wines-fold3-test.csv"),
             Fold.fromFiles(3135, "wines-fold4-train.csv", 783, "wines-fold4-test.csv"),
-            Fold.fromFiles(3135, "wines-fold5-train.csv", 783, "wines-fold5-test.csv")
+            Fold.fromFiles(3135, "wines-fold5-train.csv", 783, "wines-fold5-test.csv"),
+            new Fold(allTrainingInstances, globalTestInstances)
     );
 
 
@@ -86,7 +88,7 @@ public class NeuralWinesExperiments {
         // to dump to csv: "iterations", "algorithmWithParams", "errorCurve", "true-positive", "true-negative", "false-positive", "false-negative", "time"
         int groupIndex = 0;
 
-        final List<Integer> maxIterationOptions = Arrays.asList(500, 1000, 5000, 10000);
+        final List<Integer> maxIterationOptions = Arrays.asList(500, 1000, 5000);
 
         final List<Integer> populationSizes = Arrays.asList(400, 4000);
         final List<Integer> mateFactors = Arrays.asList(100, 200);
@@ -119,15 +121,15 @@ public class NeuralWinesExperiments {
                 })) {
 
             for (Integer iterations : maxIterationOptions) {
-                   for (int index = 0; index < folds.size(); index++) {
-
+                    {
+                    final int index = 5;
                     MyRandom.initialize(3537010315L);
                     csvWriter.write(Integer.toString(groupIndex));
-                    csvWriter.write(String.format("fold%d", index + 1));
+                    csvWriter.write("allTraining");
                     trainWithBackpropagation(iterations, folds.get(index), csvWriter);
 
                     csvWriter.write(Integer.toString(groupIndex));
-                    csvWriter.write(String.format("fold%d", index + 1));
+                    csvWriter.write("allTraining");
                     trainFeedForwardWithOptimizationAlgorithm(nno -> new RandomizedHillClimbing(nno), iterations, folds.get(index), csvWriter);
 
                     for (Integer populationSize : populationSizes) {
@@ -143,7 +145,7 @@ public class NeuralWinesExperiments {
                     for (Double temperatureFactor : temperatureFactors) {
                         for (Double coolingFactor : coolingFactors) {
                             csvWriter.write(Integer.toString(groupIndex));
-                            csvWriter.write(String.format("fold%d", index + 1));
+                            csvWriter.write("allTraining");
                             trainFeedForwardWithOptimizationAlgorithm(nno -> new SimulatedAnnealing(temperatureFactor, coolingFactor, nno), iterations, folds.get(index), csvWriter);
                         }
                     }
@@ -159,8 +161,9 @@ public class NeuralWinesExperiments {
         double[][][] attributes = new double[lineCount][][];
 
         try {
-            BufferedReader br = new BufferedReader(new FileReader(NeuralNetworkThings.class.getResource(
-                    filename).getFile()));
+            BufferedReader br = new BufferedReader(new InputStreamReader(
+                    NeuralNetworkThings.class.getResourceAsStream(
+                    filename)));
 
             for (int i = 0; i < attributes.length; i++) {
                 Scanner scan = new Scanner(br.readLine());
